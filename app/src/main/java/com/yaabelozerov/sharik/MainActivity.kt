@@ -25,14 +25,20 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.yaabelozerov.sharik.data.ApiService
+import com.yaabelozerov.sharik.data.ApiServiceMock
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.theme.SharikTheme
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
+import retrofit2.Retrofit
 
 val appModule = module {
     single { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+    single { if (!Const.MOCK) Retrofit.Builder().baseUrl(Const.BASE_URL).build().create(ApiService::class.java) else ApiServiceMock() }
+    viewModelOf(::MainVM)
 }
 
 enum class Nav(val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector) {
