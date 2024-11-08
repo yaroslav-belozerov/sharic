@@ -26,14 +26,17 @@ class MainVM(val api: ApiService) : ViewModel() {
 
     init {
         fetchCardValues()
+        fetchRandans()
     }
 
     fun fetchRandans() {
         viewModelScope.launch {
-            val randans = api.getArchiveRandansByUserId(_state.value.userId)
+            val randans = api.getCurrentRandansByUserId(_state.value.userId)
             _state.update { it.copy(randans = randans) }
         }
     }
+
+    suspend fun getUserById(id: Long) = api.getUserById(id)
 
     fun fetchCardValues() {
         viewModelScope.launch {

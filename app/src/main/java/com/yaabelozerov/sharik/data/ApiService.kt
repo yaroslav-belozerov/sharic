@@ -4,6 +4,9 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface ApiService {
+    @GET("userById")
+    suspend fun getUserById(@Query("user_id") id: Long): User
+
     @GET("currentRandans")
     suspend fun getCurrentRandansByUserId(@Query("user_id") id: Long): List<RandanDTO>
 
@@ -27,10 +30,36 @@ interface ApiService {
 }
 
 class ApiServiceMock : ApiService {
+    override suspend fun getUserById(id: Long): User {
+        return User(
+            0,
+            "+788005553535",
+            "Анатолий"
+        )
+    }
+
     override suspend fun getCurrentRandansByUserId(id: Long): List<RandanDTO> {
         return listOf(
-            RandanDTO(0, "test", listOf(ExpenseDTO(0, "пожрали)))"), ExpenseDTO(1, "поспали))))"))),
-            RandanDTO(1, "test 2", listOf(ExpenseDTO(2, "Хайп"))),
+            RandanDTO(
+                0,
+                "test",
+                listOf(
+                    ExpenseDTO(
+                        0,
+                        "пожрали)))",
+                        1000f,
+                        listOf(Pair("Петрович", 200f), Pair("Данич", 800f)),
+                        0
+                    ),
+                    ExpenseDTO(
+                        0,
+                        "пожрали)))",
+                        1000f,
+                        listOf(Pair("Петрович", 200f), Pair("Данич", 800f)),
+                        0
+                    )
+                ),
+            )
         )
     }
 
@@ -55,7 +84,10 @@ class ApiServiceMock : ApiService {
     }
 
     override suspend fun peopleToRecieveMoneyByUser(id: Long): List<Pair<User, Float>> {
-        return listOf(Pair(User(0, "test_login", "Mr Test"), 150f), Pair(User(0, "skibidi", "Skibidi Rizzler"), 350f))
+        return listOf(
+            Pair(User(0, "test_login", "Mr Test"), 150f),
+            Pair(User(0, "skibidi", "Skibidi Rizzler"), 350f)
+        )
     }
 
 
