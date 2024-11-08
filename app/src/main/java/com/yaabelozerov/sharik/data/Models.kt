@@ -1,7 +1,22 @@
 package com.yaabelozerov.sharik.data
 
-data class RandanDTO(val id: Long, val name: String, val expenses: List<ExpenseDTO>)
+import com.squareup.moshi.Json
 
-data class ExpenseDTO(val id: Long, val name: String)
+data class RandanDTO(val id: Long, val name: String)
 
-data class User(val id: Long, val login: String, val name: String)
+data class ActivityDTO(
+    val id: Long, val name: String, @Json(name = "randan_id") val randanId: Long
+)
+
+data class UserDTO(
+    val id: Long,
+    @Json(name = "first_name") val firstName: String,
+    @Json(name = "last_name") val lastName: String,
+    val username: String
+)
+
+data class RegisterDTO(
+    val username: String = "", val firstName: String = "", val lastName: String = "", val password: String = ""
+)
+
+data class LoginDTO(val username: String = "", val password: String = "")

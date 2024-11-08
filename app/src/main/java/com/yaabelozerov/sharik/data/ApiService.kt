@@ -1,6 +1,11 @@
 package com.yaabelozerov.sharik.data
 
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
@@ -11,7 +16,7 @@ interface ApiService {
     suspend fun getArchiveRandansByUserId(@Query("user_id") id: Long): List<RandanDTO>
 
     @GET("randanExpenses")
-    suspend fun getExpensesByRandanId(@Query("randan_id") id: Long): List<ExpenseDTO>
+    suspend fun getExpensesByRandanId(@Query("randan_id") id: Long): List<ActivityDTO>
 
     @GET("TotalDebt")
     suspend fun totalDebtByUser(@Query("user_id") id: Long): Float
@@ -20,25 +25,28 @@ interface ApiService {
     suspend fun totalProfitByUser(@Query("user_id") id: Long): Float
 
     @GET("peopleToGiveMoney")
-    suspend fun peopleToGiveMoneyByUser(@Query("user_id") id: Long): List<Pair<User, Float>>
+    suspend fun peopleToGiveMoneyByUser(@Query("user_id") id: Long): List<Pair<UserDTO, Float>>
 
     @GET("peopleToRecieveMoney")
-    suspend fun peopleToRecieveMoneyByUser(@Query("user_id") id: Long): List<Pair<User, Float>>
+    suspend fun peopleToRecieveMoneyByUser(@Query("user_id") id: Long): List<Pair<UserDTO, Float>>
+
+    @POST("register")
+    fun register(@Body registerDTO: RegisterDTO): Call<String>
+
+    @POST("login")
+    fun login(@Body loginDTO: LoginDTO): Call<String>
 }
 
 class ApiServiceMock : ApiService {
     override suspend fun getCurrentRandansByUserId(id: Long): List<RandanDTO> {
-        return listOf(
-            RandanDTO(0, "test", listOf(ExpenseDTO(0, "пожрали)))"), ExpenseDTO(1, "поспали))))"))),
-            RandanDTO(1, "test 2", listOf(ExpenseDTO(2, "Хайп"))),
-        )
+        TODO("Not yet implemented")
     }
 
     override suspend fun getArchiveRandansByUserId(id: Long): List<RandanDTO> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getExpensesByRandanId(id: Long): List<ExpenseDTO> {
+    override suspend fun getExpensesByRandanId(id: Long): List<ActivityDTO> {
         TODO("Not yet implemented")
     }
 
@@ -50,12 +58,23 @@ class ApiServiceMock : ApiService {
         return 500f
     }
 
-    override suspend fun peopleToGiveMoneyByUser(id: Long): List<Pair<User, Float>> {
-        return listOf(Pair(User(0, "test_evil", "Mr Evil"), 200f))
+    override suspend fun peopleToGiveMoneyByUser(id: Long): List<Pair<UserDTO, Float>> {
+        return listOf(Pair(UserDTO(0, "Mr Evil", "Jonkler", "test_evil"), 200f))
     }
 
-    override suspend fun peopleToRecieveMoneyByUser(id: Long): List<Pair<User, Float>> {
-        return listOf(Pair(User(0, "test_login", "Mr Test"), 150f), Pair(User(0, "skibidi", "Skibidi Rizzler"), 350f))
+    override suspend fun peopleToRecieveMoneyByUser(id: Long): List<Pair<UserDTO, Float>> {
+        return listOf(
+            Pair(UserDTO(0, "Mr Test", "Guy", "test_login"), 150f),
+            Pair(UserDTO(0, "Skibidi", "Rizzler", "skibidi"), 350f)
+        )
+    }
+
+    override fun register(registerDTO: RegisterDTO): Call<String> {
+        TODO("Not yet implemented")
+    }
+
+    override fun login(loginDTO: LoginDTO): Call<String> {
+        TODO("Not yet implemented")
     }
 
 
