@@ -1,5 +1,9 @@
 package com.yaabelozerov.sharik.ui
 
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,66 +37,72 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yaabelozerov.sharik.data.User
 import com.yaabelozerov.sharik.domain.MainVM
+import kotlin.math.exp
 
 @Composable
 fun MainPage(
     mainVM: MainVM
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    var arrowDeg = animateFloatAsState(if (expanded) 180f else 0f, animationSpec = tween(400))
     Column(
-        Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top
+        Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top
     ) {
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, 0.dp, 0.dp, 16.dp),
+                .padding(end = 16.dp, start = 32.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Долги", // TODO String res
-                modifier = Modifier
-                    .padding(16.dp, 4.dp, 8.dp, 4.dp),
-                fontSize = 18.sp
+                 fontSize = 18.sp
             )
             Box(
-                modifier = Modifier
-                    .padding(0.dp, 0.dp, 8.dp, 0.dp)
-                    .height(5.dp)
+                modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                    .height(4.dp)
                     .weight(1f)
                     .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
             )
 
-            IconButton(
-                onClick = {}
-            ) {
-                Icon(Icons.Filled.KeyboardArrowDown, contentDescription = null, Modifier.size(32.dp))
+            IconButton(onClick = {
+                if (!expanded) mainVM.fetchCardPeople()
+                expanded = !expanded
+            }) {
+                Icon(
+                    Icons.Filled.KeyboardArrowDown,
+                    contentDescription = null,
+                    Modifier
+                        .size(32.dp)
+                        .rotate(arrowDeg.value)
+                )
             }
         }
 
         Row(
             Modifier
-                .height(128.dp)
                 .fillMaxWidth()
-                .padding(8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(horizontal = 16.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            val (profit, debt) = mainVM.state.collectAsState().value.cardPreviews
+            val (profitPeople, debtPeople) = mainVM.state.collectAsState().value.cardPeople
             DebtCard(
-                MaterialTheme.colorScheme.tertiaryContainer,
-                "Мне",
-                mainVM.state.collectAsState().value.totalProfit.toString()
+                MaterialTheme.colorScheme.tertiaryContainer, "Мне", profit.toString(), expanded, profitPeople
             )
             DebtCard(
-                MaterialTheme.colorScheme.errorContainer,
-                "Я",
-                mainVM.state.collectAsState().value.totalDebt.toString()
+                MaterialTheme.colorScheme.errorContainer, "Мои", debt.toString(), expanded, debtPeople
             )
         }
     }
@@ -104,35 +114,37 @@ fun RowScope.DebtCard(
     color: Color,
     text: String,
     value: String,
+    expanded: Boolean,
+    people: List<Pair<User, Float>>
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    OutlinedCard(
-        Modifier
-            .fillMaxHeight().weight(1f),
-        colors = CardDefaults.cardColors(
+    Card(
+        Modifier.weight(1f), colors = CardDefaults.cardColors(
             containerColor = color,
-        ),
-        border = BorderStroke(1.dp, Color.Black)
+        )
     ) {
-        Row(verticalAlignment = Alignment.Bottom) {
-            Column(Modifier.weight(1f)) {
-                Text(
-                    text = text,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center,
-                )
-                Text(
-                    text = value,
-                    modifier = Modifier
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp
-                )
+        Text(
+            text = text,
+            modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = value,
+            modifier = Modifier.padding(start = 16.dp),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        )
+        AnimatedVisibility(expanded, modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column(Modifier.padding(top = 16.dp)) {
+                people.forEach {
+                    Row {
+                        Text(it.first.name, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f), maxLines = 1)
+                        Spacer(Modifier.width(8.dp))
+                        Text(it.second.toString())
+                    }
+                }
             }
-            // IconButton(modifier = Modifier.padding(8.dp), onClick = {}) { Icon(Icons.Default.KeyboardArrowDown, null) }
         }
+        Spacer(Modifier.height(16.dp))
     }
 }

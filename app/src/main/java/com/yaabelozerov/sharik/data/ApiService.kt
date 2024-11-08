@@ -51,11 +51,11 @@ class ApiServiceMock : ApiService {
     }
 
     override suspend fun peopleToGiveMoneyByUser(id: Long): List<Pair<User, Float>> {
-        TODO("Not yet implemented")
+        return listOf(Pair(User(0, "test_evil", "Mr Evil"), 200f))
     }
 
     override suspend fun peopleToRecieveMoneyByUser(id: Long): List<Pair<User, Float>> {
-        TODO("Not yet implemented")
+        return listOf(Pair(User(0, "test_login", "Mr Test"), 150f), Pair(User(0, "skibidi", "Skibidi Rizzler"), 350f))
     }
 
 
