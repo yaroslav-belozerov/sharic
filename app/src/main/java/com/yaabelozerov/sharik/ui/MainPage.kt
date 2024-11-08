@@ -25,6 +25,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,10 +38,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yaabelozerov.sharik.domain.MainVM
 
 @Composable
 fun MainPage(
-
+    mainVM: MainVM
 ) {
     Column(
         Modifier.fillMaxSize(),
@@ -54,6 +60,7 @@ fun MainPage(
                 text = "Долги", // TODO String res
                 modifier = Modifier
                     .padding(16.dp, 4.dp, 8.dp, 4.dp),
+                fontSize = 18.sp
             )
             Box(
                 modifier = Modifier
@@ -63,6 +70,12 @@ fun MainPage(
                     .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
             )
+
+            IconButton(
+                onClick = {}
+            ) {
+                Icon(Icons.Filled.KeyboardArrowDown, contentDescription = null, Modifier.size(32.dp))
+            }
         }
 
         Row(
@@ -73,11 +86,13 @@ fun MainPage(
         ) {
             DebtCard(
                 MaterialTheme.colorScheme.tertiaryContainer,
-                "Мне", "200"
+                "Мне",
+                mainVM.state.collectAsState().value.totalProfit.toString()
             )
             DebtCard(
                 MaterialTheme.colorScheme.errorContainer,
-                "Я", "500"
+                "Я",
+                mainVM.state.collectAsState().value.totalDebt.toString()
             )
         }
     }
@@ -88,8 +103,9 @@ fun MainPage(
 fun RowScope.DebtCard(
     color: Color,
     text: String,
-    value: String
+    value: String,
 ) {
+    var expanded by remember { mutableStateOf(false) }
     OutlinedCard(
         Modifier
             .fillMaxHeight().weight(1f),
@@ -116,7 +132,7 @@ fun RowScope.DebtCard(
                     fontSize = 22.sp
                 )
             }
-            IconButton(modifier = Modifier.padding(8.dp), onClick = {}) { Icon(Icons.Default.KeyboardArrowDown, null) }
+            // IconButton(modifier = Modifier.padding(8.dp), onClick = {}) { Icon(Icons.Default.KeyboardArrowDown, null) }
         }
     }
 }

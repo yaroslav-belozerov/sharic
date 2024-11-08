@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                 }) { innerPadding ->
                     NavHost(modifier = Modifier.padding(innerPadding), navController = navCtrl, startDestination = Nav.MAIN.route) {
                         composable(Nav.MAIN.route) {
-                            MainPage()
+                            MainPage(mainVM)
                         }
                     }
                 }
