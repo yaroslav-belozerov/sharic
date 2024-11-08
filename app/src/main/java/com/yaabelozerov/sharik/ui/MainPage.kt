@@ -71,33 +71,15 @@ fun MainPage(
                 .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            OutlinedCard(
-                Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                ),
-                border = BorderStroke(1.dp, Color.Black)
-            ) {
-
-                Text(
-                    text = "Мне",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center,
-                )
-                Text(
-                    text = "500",
-                    modifier = Modifier
-                        .padding(16.dp),
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }
+            DebtCard(
+                MaterialTheme.colorScheme.tertiaryContainer,
+                "Мне"
+            )
             Spacer(Modifier.size(8.dp))
+            DebtCard(
+                MaterialTheme.colorScheme.errorContainer,
+                "Я"
+            )
 
         }
     }
@@ -105,18 +87,20 @@ fun MainPage(
 }
 
 @Composable
-fun DebtCard() {
+fun DebtCard(
+    color: Color,
+    text: String
+) {
     OutlinedCard(
         Modifier
-            .weight(1f)
             .fillMaxHeight(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            containerColor = color,
         ),
         border = BorderStroke(1.dp, Color.Black)
     ) {
         Text(
-            text = "Мне",
+            text = text,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
