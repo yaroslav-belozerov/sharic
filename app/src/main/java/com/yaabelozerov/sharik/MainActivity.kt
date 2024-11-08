@@ -25,7 +25,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.theme.SharikTheme
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
@@ -47,6 +49,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            val mainVM = koinViewModel<MainVM>()
             val navCtrl = rememberNavController()
 
             SharikTheme {
