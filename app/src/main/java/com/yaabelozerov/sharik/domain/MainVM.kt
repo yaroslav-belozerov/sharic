@@ -91,12 +91,13 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
 
     fun register(registerDTO: RegisterDTO) {
         viewModelScope.launch {
-            val resp = api.register(registerDTO).awaitResponse()
-            if (resp.code() == 200) {
-                setToken(resp.body()!!)
-            } else {
-                Log.e("register", "${resp.code()} ${resp.errorBody()}")
-            }
+            setToken("token <3")
+//            val resp = api.register(registerDTO).awaitResponse()
+//            if (resp.code() == 200) {
+//                setToken(resp.body()!!)
+//            } else {
+//                Log.e("register", "${resp.code()} ${resp.errorBody()}")
+//            }
         }
     }
 }
