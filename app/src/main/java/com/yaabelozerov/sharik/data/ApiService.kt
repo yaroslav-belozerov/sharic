@@ -12,6 +12,18 @@ interface ApiService {
 
     @GET("randanExpenses")
     suspend fun getExpensesByRandanId(@Query("randan_id") id: Long): List<ExpenseDTO>
+
+    @GET("TotalDebt")
+    suspend fun totalDebtByUser(@Query("user_id") id: Long): Float
+
+    @GET("TotalProfit")
+    suspend fun totalProfitByUser(@Query("user_id") id: Long): Float
+
+    @GET("peopleToGiveMoney")
+    suspend fun peopleToGiveMoneyByUser(@Query("user_id") id: Long): List<Pair<User, Float>>
+
+    @GET("peopleToRecieveMoney")
+    suspend fun peopleToRecieveMoneyByUser(@Query("user_id") id: Long): List<Pair<User, Float>>
 }
 
 class ApiServiceMock : ApiService {
@@ -29,5 +41,22 @@ class ApiServiceMock : ApiService {
     override suspend fun getExpensesByRandanId(id: Long): List<ExpenseDTO> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun totalDebtByUser(id: Long): Float {
+        return 200f
+    }
+
+    override suspend fun totalProfitByUser(id: Long): Float {
+        return 500f
+    }
+
+    override suspend fun peopleToGiveMoneyByUser(id: Long): List<Pair<User, Float>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun peopleToRecieveMoneyByUser(id: Long): List<Pair<User, Float>> {
+        TODO("Not yet implemented")
+    }
+
 
 }
