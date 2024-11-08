@@ -80,6 +80,7 @@ fun MainPage(
                 ),
                 border = BorderStroke(1.dp, Color.Black)
             ) {
+
                 Text(
                     text = "Мне",
                     modifier = Modifier
