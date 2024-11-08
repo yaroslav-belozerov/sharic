@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.yaabelozerov.sharik"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.yaabelozerov.sharik"
