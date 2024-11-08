@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -68,51 +69,54 @@ fun MainPage(
             Modifier
                 .height(128.dp)
                 .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             DebtCard(
                 MaterialTheme.colorScheme.tertiaryContainer,
-                "Мне"
+                "Мне", "200"
             )
-            Spacer(Modifier.size(8.dp))
             DebtCard(
                 MaterialTheme.colorScheme.errorContainer,
-                "Я"
+                "Я", "500"
             )
-
         }
     }
 
 }
 
 @Composable
-fun DebtCard(
+fun RowScope.DebtCard(
     color: Color,
-    text: String
+    text: String,
+    value: String
 ) {
     OutlinedCard(
         Modifier
-            .fillMaxHeight(),
+            .fillMaxHeight().weight(1f),
         colors = CardDefaults.cardColors(
             containerColor = color,
         ),
         border = BorderStroke(1.dp, Color.Black)
     ) {
-        Text(
-            text = text,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = "500",
-            modifier = Modifier
-                .padding(16.dp),
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
-        )
+        Row(verticalAlignment = Alignment.Bottom) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = text,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = value,
+                    modifier = Modifier
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 22.sp
+                )
+            }
+            IconButton(modifier = Modifier.padding(8.dp), onClick = {}) { Icon(Icons.Default.KeyboardArrowDown, null) }
+        }
     }
 }
