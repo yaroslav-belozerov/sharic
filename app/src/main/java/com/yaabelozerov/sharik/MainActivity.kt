@@ -30,6 +30,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.yaabelozerov.sharik.data.ApiService
 import com.yaabelozerov.sharik.data.ApiServiceMock
+import com.yaabelozerov.sharik.data.DataStore
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.MainPage
 import com.yaabelozerov.sharik.ui.theme.SharikTheme
@@ -42,6 +43,7 @@ import retrofit2.Retrofit
 val appModule = module {
     single { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
     single { if (!Const.MOCK) Retrofit.Builder().baseUrl(Const.BASE_URL).build().create(ApiService::class.java) else ApiServiceMock() }
+    single { DataStore(get()) }
     viewModelOf(::MainVM)
 }
 
