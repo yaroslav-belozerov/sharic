@@ -8,8 +8,8 @@ data class Randan(
     val id: String,
     val name: String,
     val activities: List<Activity>,
-    val debts: List<Debt>,
-    val users: List<User3>,
+    // val debts: List<Debt>,
+    val users: List<User>,
     val isFinished: String,
 )
 
@@ -47,7 +47,7 @@ data class User(
 
 data class Debt(
     val id: String,
-    val user: User2,
+    val user: User,
     val randan: Map<String, Any>,
     val amount: Long,
 )

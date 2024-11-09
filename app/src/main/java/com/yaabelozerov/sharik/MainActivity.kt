@@ -43,7 +43,6 @@ import com.example.compose.AppTheme
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.yaabelozerov.sharik.data.ApiService
-import com.yaabelozerov.sharik.data.ApiServiceMock
 import com.yaabelozerov.sharik.data.DataStore
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.AuthPage
@@ -57,10 +56,11 @@ import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 val appModule = module {
     single { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-    single { if (!Const.MOCK) Retrofit.Builder().baseUrl(Const.BASE_URL).build().create(ApiService::class.java) else ApiServiceMock() }
+    single {Retrofit.Builder().baseUrl(Const.BASE_URL).addConverterFactory(MoshiConverterFactory.create(get())).build().create(ApiService::class.java) }
     single { DataStore(get()) }
     viewModelOf(::MainVM)
 }
