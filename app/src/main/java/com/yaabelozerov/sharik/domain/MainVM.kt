@@ -52,9 +52,10 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
 
     private suspend fun fetchRandans() {
         try {
-            val randans = api.getCurrentRandansByUserId(_state.value.userId, _state.value.token!!)
+            val randans = api.getRandansByUser(_state.value.token!!)
             _state.update { it.copy(randans = randans) }
         } catch (e: Exception) {
+            Log.w("api", "FetchRandans")
             e.printStackTrace()
         }
     }
@@ -71,6 +72,7 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
                 }
             }
         } catch (e: Exception) {
+            Log.w("api", "FetchUser")
             e.printStackTrace()
         }
     }
