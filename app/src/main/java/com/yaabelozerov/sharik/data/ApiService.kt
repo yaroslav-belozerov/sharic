@@ -1,5 +1,6 @@
 package com.yaabelozerov.sharik.data
 
+import android.util.Log
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
@@ -57,6 +58,9 @@ interface ApiService {
 
     @POST("login")
     fun login(@Body loginDTO: LoginDTO): Call<TokenDTO>
+
+    @POST("addUserToRandan")
+    fun addUserToRandan(@Query("randan_id") randanId: Long, @Header("Authorization") token: String)
 }
 
 class ApiServiceMock : ApiService {
@@ -126,5 +130,9 @@ class ApiServiceMock : ApiService {
     }
     override fun login(loginDTO: LoginDTO): Call<TokenDTO> {
         TODO("Not yet implemented")
+    }
+
+    override fun addUserToRandan(randanId: Long, token: String) {
+        Log.i("ApiService", "addUserToRandan: $randanId")
     }
 }

@@ -2,6 +2,7 @@ package com.yaabelozerov.sharik
 
 import android.media.Image
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -37,6 +38,7 @@ import com.yaabelozerov.sharik.ui.AuthPage
 import com.yaabelozerov.sharik.ui.MainPage
 import com.yaabelozerov.sharik.ui.theme.SharikTheme
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModelOf
@@ -65,8 +67,17 @@ class MainActivity : ComponentActivity() {
             modules(appModule)
         }
 
+        val mainVM = getViewModel<MainVM>()
+
+        intent.data?.let { data ->
+            data.getQueryParameter("randan_id")?.let { id ->
+                id.toLongOrNull()?.let {
+                    mainVM.addUserToRandan(it)
+                }
+            }
+        }
+
         setContent {
-            val mainVM = koinViewModel<MainVM>()
             val navCtrl = rememberNavController()
 
             SharikTheme {

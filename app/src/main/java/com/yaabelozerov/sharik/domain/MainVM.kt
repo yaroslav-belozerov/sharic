@@ -110,4 +110,13 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
 //            }
         }
     }
+
+    fun addUserToRandan(randanId: Long) {
+        viewModelScope.launch {
+            _state.value.token?.let {
+                api.addUserToRandan(randanId, it)
+            } ?: Log.e("addUserToRandan", "token null, randanId $randanId")
+            //api.addUserToRandan(0L, _state.value.token!!)
+        }
+    }
 }
