@@ -46,7 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yaabelozerov.sharik.data.UserDTO
+import com.yaabelozerov.sharik.data.User
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.components.RCard
 import kotlin.math.exp
@@ -135,7 +135,7 @@ fun RowScope.DebtCard(
     text: String,
     value: String,
     expanded: Boolean,
-    people: List<Pair<UserDTO, Float>>
+    people: List<Pair<User, Float>>
 ) {
     Card(
         Modifier.weight(1f), colors = CardDefaults.cardColors(

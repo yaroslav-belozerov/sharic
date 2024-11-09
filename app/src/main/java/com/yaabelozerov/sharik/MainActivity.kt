@@ -61,24 +61,14 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 val appModule = module {
     single { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-    single {
-        if (!Const.MOCK) Retrofit.Builder().baseUrl(Const.BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(get())).build()
-            .create(ApiService::class.java) else ApiServiceMock()
-    }
+    single {Retrofit.Builder().baseUrl(Const.BASE_URL).addConverterFactory(MoshiConverterFactory.create(get())).build().create(ApiService::class.java) }
     single { DataStore(get()) }
     viewModelOf(::MainVM)
 }
 
-enum class Nav(
-    val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String
-) {
-    MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи"), SETTINGS(
-        "settings",
-        Icons.Filled.Menu,
-        Icons.Outlined.Menu,
-        "Настройки"
-    )
+enum class Nav(val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String) {
+    MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи"),
+    SETTINGS("settings", Icons.Filled.Menu, Icons.Outlined.Menu, "Настройки")
 }
 
 class MainActivity : ComponentActivity() {

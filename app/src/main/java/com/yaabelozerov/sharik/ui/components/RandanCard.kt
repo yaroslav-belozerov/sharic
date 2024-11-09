@@ -43,14 +43,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.yaabelozerov.sharik.data.RandanDTO
+import com.yaabelozerov.sharik.data.Owe
+import com.yaabelozerov.sharik.data.Randan
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.widgets.AddActivityidget
 import kotlinx.coroutines.launch
 
 @Composable
 fun RCard(
-    randan: RandanDTO,
+    randan: Randan,
     mainVM: MainVM,
     onClickAdd: () -> Unit
 ) {
@@ -91,18 +92,12 @@ fun RCard(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             )  {
                 activities.forEach {
-                    var name: String? by remember { mutableStateOf(null) }
-                    scope.launch {
-                        //name = mainVM.getUserById(it.paidByUserId).username
-                    }
-                    name?.let { name ->
                         ExpenseCard(
                             name = it.name,
-                            paidBy = name,
-                            needToPay = it.users,
-                            sum = it.sum
+                            paidBy = it.pays.firstName,
+                            needToPay = it.owes,
+                            sum = it.sum.toFloat() / 100
                         )
-                    }
                 }
                 Button(
                     onClick = { addActivityDialogOpen = true },
@@ -127,7 +122,7 @@ fun ExpenseCard(
     name: String,
     sum: Float,
     paidBy: String,
-    needToPay: List<Pair<String, Float>>
+    needToPay: List<Owe>
 ) {
     Card(
         Modifier.fillMaxWidth(),
@@ -164,8 +159,8 @@ fun ExpenseCard(
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 items(needToPay) {
                     Column {
-                        Text(it.first, fontSize = 18.sp)
-                        Text(it.second.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text(it.user.firstName, fontSize = 18.sp)
+                        Text((it.amount / 100).toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     }
                 }
             }

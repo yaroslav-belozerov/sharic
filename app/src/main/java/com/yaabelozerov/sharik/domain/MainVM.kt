@@ -7,9 +7,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yaabelozerov.sharik.data.ApiService
 import com.yaabelozerov.sharik.data.DataStore
 import com.yaabelozerov.sharik.data.LoginDTO
-import com.yaabelozerov.sharik.data.RandanDTO
+import com.yaabelozerov.sharik.data.Randan
 import com.yaabelozerov.sharik.data.RegisterDTO
-import com.yaabelozerov.sharik.data.UserDTO
+import com.yaabelozerov.sharik.data.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -22,9 +22,9 @@ import retrofit2.awaitResponse
 
 data class MainState(
     val userId: Long = 0L,
-    val randans: List<RandanDTO> = emptyList(),
+    val randans: List<Randan> = emptyList(),
     val cardPreviews: Pair<Float, Float> = Pair(0f, 0f),
-    val cardPeople: Pair<List<Pair<UserDTO, Float>>, List<Pair<UserDTO, Float>>> = Pair(
+    val cardPeople: Pair<List<Pair<User, Float>>, List<Pair<User, Float>>> = Pair(
         emptyList(), emptyList()
     ),
     val token: String? = null
@@ -52,15 +52,30 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
     }
 
     private suspend fun fetchRandans() {
-//        val randans = api.getCurrentRandansByUserId(_state.value.userId, _state.value.token!!)
-        _state.update { it.copy(randans = emptyList()) }
+        try {
+            val randans = api.getRandansByUser(_state.value.token!!)
+            _state.update { it.copy(randans = randans) }
+        } catch (e: Exception) {
+            Log.w("api", "FetchRandans")
+            e.printStackTrace()
+        }
     }
 
     private suspend fun fetchUser() {
-        //val user = _state.value.token?.let { api.getUser(it) }
-        //if (user != null) {
-        //    _userState.update { state -> state.copy(name = user.firstName, surname = user.lastName) }
-        //}
+        try {
+            val user = _state.value.token?.let { api.getUser(it) }
+            if (user != null) {
+                _userState.update { state ->
+                    state.copy(
+                        name = user.firstName,
+                        surname = user.lastName
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.w("api", "FetchUser")
+            e.printStackTrace()
+        }
     }
 
     private suspend fun fetchToken() {
@@ -71,8 +86,6 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
         }
     }
 
-    //suspend fun getUserById(id: Long) = api.getUserById(id, _state.value.token!!)
-
     private suspend fun setToken(token: String) {
         dataStore.saveToken(token)
         _state.update { state ->
@@ -80,29 +93,29 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
         }
     }
 
-//    private suspend fun fetchCardValues() {
-//        _state.update {
-//            it.copy(
-//                cardPreviews = Pair(
-//                    api.totalDebtByUser(_state.value.userId, _state.value.token!!),
-//                    api.totalProfitByUser(_state.value.userId, _state.value.token!!)
-//                )
-//            )
-//        }
-//    }
+    private suspend fun fetchCardValues() {
+        _state.update {
+            it.copy(
+                cardPreviews = Pair(
+                    api.totalDebtByUser(_state.value.userId, _state.value.token!!),
+                    api.totalProfitByUser(_state.value.userId, _state.value.token!!)
+                )
+            )
+        }
+    }
 
-//    fun fetchCardPeople() {
-//        viewModelScope.launch {
-//            _state.update {
-//                it.copy(
-//                    cardPeople = Pair(
-//                        api.peopleToGiveMoneyByUser(0L, _state.value.token!!),
-//                        api.peopleToRecieveMoneyByUser(0L, _state.value.token!!)
-//                    )
-//                )
-//            }
-//        }
-//    }
+    fun fetchCardPeople() {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    cardPeople = Pair(
+                        api.peopleToGiveMoneyByUser(0L, _state.value.token!!),
+                        api.peopleToRecieveMoneyByUser(0L, _state.value.token!!)
+                    )
+                )
+            }
+        }
+    }
 
     fun login(loginDTO: LoginDTO) {
         viewModelScope.launch {
@@ -129,7 +142,7 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
     fun addUserToRandan(randanId: Long) {
         viewModelScope.launch {
             _state.value.token?.let {
-//                api.addUserToRandan(randanId, it)
+                api.addUserToRandan(randanId, it)
             } ?: Log.e("addUserToRandan", "token null, randanId $randanId")
             //api.addUserToRandan(0L, _state.value.token!!)
         }
