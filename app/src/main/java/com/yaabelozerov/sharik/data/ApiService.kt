@@ -12,10 +12,10 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
-    @POST("randan/")
+    @POST("randan")
     suspend fun createRandan(@Body randan: CreateRandanRequest, @Header("Authorization") token: String)
 
-    @GET("user/")
+    @GET("user/g")
     suspend fun getUser(@Header("Authorization") token: String): User
 
     @GET("userById")
