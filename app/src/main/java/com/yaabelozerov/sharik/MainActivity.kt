@@ -9,6 +9,8 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -100,6 +102,20 @@ class MainActivity : ComponentActivity() {
 
 
         val mainVM = getViewModel<MainVM>()
+
+        val openAvatarChooser =
+            registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                uri?.let {
+                    mainVM.onMediaPicker(this, uri)
+                }
+            }
+        mainVM.setMediaChoose {
+            openAvatarChooser.launch(
+                PickVisualMediaRequest(
+                    ActivityResultContracts.PickVisualMedia.ImageOnly
+                )
+            )
+        }
 
         intent.data?.let { data ->
             data.getQueryParameter("randan_id")?.let { id ->

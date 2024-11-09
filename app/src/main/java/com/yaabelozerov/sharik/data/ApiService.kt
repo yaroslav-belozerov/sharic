@@ -1,6 +1,7 @@
 package com.yaabelozerov.sharik.data
 
 import android.util.Log
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
@@ -8,20 +9,23 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface ApiService {
-    @POST("randan/")
+    @POST("randan")
     suspend fun createRandan(@Body randan: CreateRandanRequest, @Header("Authorization") token: String)
 
-    @GET("user/")
+    @GET("user")
     suspend fun getUser(@Header("Authorization") token: String): User
 
     @GET("userById")
     suspend fun getUserById(@Query("user_id") id: Long,@Header("Authorization") token: String): User
 
-    @GET("randan/")
+    @GET("randan")
     suspend fun getRandansByUser(@Header("Authorization") token: String
     ): List<Randan>
 
@@ -67,4 +71,11 @@ interface ApiService {
 
     @POST("addUserToRandan")
     fun addUserToRandan(@Query("randan_id") randanId: Long, @Header("Authorization") token: String)
+
+    @Multipart
+    @POST("aws/upload")
+    suspend fun uploadAvatar(@Part file: MultipartBody.Part, @Header("Authorization") token: String): ResponseBody
+
+    @PUT("user")
+    suspend fun updateUser(@Body user: User, @Header("Authorization") token: String)
 }

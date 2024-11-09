@@ -45,12 +45,11 @@ data class Owe(
 )
 
 data class User(
-    val id: String,
-    val username: String,
-    val firstName: String,
-    val lastName: String,
-    @Json(name = "avatarURL")
-    val avatarUrl: String,
+    val id: String = "",
+    val username: String = "",
+    val firstName: String = "",
+    val lastName: String = "",
+    @Json(name = "avatarURL") val avatarUrl: String = "",
 )
 
 data class Debt(

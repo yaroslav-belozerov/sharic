@@ -1,5 +1,9 @@
 package com.yaabelozerov.sharik.domain
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -14,6 +18,7 @@ import com.yaabelozerov.sharik.data.LoginDTO
 import com.yaabelozerov.sharik.data.Randan
 import com.yaabelozerov.sharik.data.RegisterDTO
 import com.yaabelozerov.sharik.data.User
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -24,8 +29,17 @@ import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.ResponseBody
 import retrofit2.HttpException
 import retrofit2.awaitResponse
+import retrofit2.http.Multipart
+import java.io.File
+import java.nio.file.Files
+import java.util.UUID
 
 data class MainState(
     val userId: Long = 0L,
@@ -37,17 +51,42 @@ data class MainState(
     val token: String? = null
 )
 
-data class UserState(
-    val name: String? = null,
-    val surname: String? = null
-)
-
 class MainVM(private val api: ApiService, private val dataStore: DataStore, private val moshi: Moshi) : ViewModel() {
     private val _state = MutableStateFlow(MainState())
     val state = _state.asStateFlow()
 
-    private val _userState = MutableStateFlow(UserState())
+    private val _userState = MutableStateFlow<User?>(null)
     val userState = _userState.asStateFlow()
+
+    private val mediaChoose = MutableStateFlow<(() -> Unit)?>(null)
+    fun setMediaChoose(f: () -> Unit) {
+        mediaChoose.update { f }
+    }
+
+    fun onPickMedia() {
+        mediaChoose.value?.invoke()
+    }
+
+    fun onMediaPicker(app: Context, uri: Uri) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                app.contentResolver.openInputStream(uri)?.use {
+                    val bitmap = BitmapFactory.decodeStream(it)
+                    val dir = File(app.cacheDir, "images")
+                    dir.mkdir()
+                    val file = File(dir, UUID.randomUUID().toString() + ".jpg")
+                    file.createNewFile()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 1, file.outputStream())
+                    val part = MultipartBody.Part.createFormData("file", file.name,
+                        file.asRequestBody()
+                    )
+                    val resp = api.uploadAvatar(part, _state.value.token!!)
+                    editUser(_userState.value!!.copy(avatarUrl = resp.string()))
+                    fetchUser()
+                }
+            }
+        }
+    }
 
     init {
         viewModelScope.launch {
@@ -76,10 +115,7 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
             val user = _state.value.token?.let { api.getUser(it) }
             if (user != null) {
                 _userState.update { state ->
-                    state.copy(
-                        name = user.firstName,
-                        surname = user.lastName
-                    )
+                    user
                 }
             }
         } catch (e: Exception) {
@@ -153,6 +189,12 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
                 api.createRandan(CreateRandanRequest(name, emptyList(), emptyList(), emptyList(), false), it)
             } ?: Log.e("createRandan", "token null")
             fetchRandans()
+        }
+    }
+
+    private suspend fun editUser(user: User) {
+        _state.value.token?.let {
+            api.updateUser(user, it)
         }
     }
 }
