@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yaabelozerov.sharik.data.LoginDTO
@@ -41,6 +42,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                 var typedUsername by remember { mutableStateOf(false) }
                 OutlinedTextField(loginDTO.username,
                     label = { Text("Логин") },
+                    enabled = !loading,
                     onValueChange = {
                         loginDTO = loginDTO.copy(username = it)
                         typedUsername = true
@@ -52,6 +54,8 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                 var typedPassword by remember { mutableStateOf(false) }
                 OutlinedTextField(loginDTO.password,
                     label = { Text("Пароль") },
+                    enabled = !loading,
+                    visualTransformation = PasswordVisualTransformation(),
                     onValueChange = {
                         loginDTO = loginDTO.copy(password = it)
                         typedPassword = true
@@ -82,6 +86,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                 var typedUsername by remember { mutableStateOf(false) }
                 OutlinedTextField(registerDTO.username,
                     label = { Text("Логин") },
+                    enabled = !loading,
                     onValueChange = {
                         registerDTO = registerDTO.copy(username = it)
                         typedUsername = true
@@ -93,6 +98,8 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                 var typedPassword by remember { mutableStateOf(false) }
                 OutlinedTextField(registerDTO.password,
                     label = { Text("Пароль") },
+                    enabled = !loading,
+                    visualTransformation = PasswordVisualTransformation(),
                     onValueChange = {
                         registerDTO = registerDTO.copy(password = it)
                         typedPassword = true
