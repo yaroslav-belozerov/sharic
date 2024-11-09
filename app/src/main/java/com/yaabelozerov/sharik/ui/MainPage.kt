@@ -120,7 +120,7 @@ fun MainPage(
         }
 
         val lst = mainVM.state.collectAsState().value.randans
-        LazyColumn {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(lst) {
                 RCard(it, mainVM, onClick)
             }
