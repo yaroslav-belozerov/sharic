@@ -47,6 +47,7 @@ import com.yaabelozerov.sharik.data.DataStore
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.AuthPage
 import com.yaabelozerov.sharik.ui.MainPage
+import com.yaabelozerov.sharik.ui.components.SettingPage
 import com.yaabelozerov.sharik.ui.theme.SharikTheme
 import com.yaabelozerov.sharik.ui.widgets.AddRandanWidget
 import org.koin.android.ext.koin.androidContext
@@ -137,6 +138,11 @@ class MainActivity : ComponentActivity() {
                         composable(Nav.MAIN.route) {
                             MainPage(mainVM) { clipboard.setPrimaryClip(clip) }
                         }
+
+                        composable(Nav.SETTINGS.route) {
+                            SettingPage(mainVM)
+                        }
+
                     }
                 } else if (token == "") {
                     Scaffold {
