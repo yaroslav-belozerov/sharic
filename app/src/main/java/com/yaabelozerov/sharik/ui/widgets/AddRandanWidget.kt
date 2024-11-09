@@ -40,7 +40,7 @@ fun AddRandanWidget(
 ) {
     var name by remember { mutableStateOf("") }
     Dialog(
-        onDismissRequest = { onDismissRequest },
+        onDismissRequest =  onDismissRequest,
 
         ) {
         Card(
@@ -67,11 +67,6 @@ fun AddRandanWidget(
 
                 )
 
-                Text(buildAnnotatedString {
-                    withLink(LinkAnnotation.Url(url = link)) {
-                        append("Ссылка для добавления")
-                    }
-                })
                 Row(
 
                 ) {

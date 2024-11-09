@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yaabelozerov.sharik.data.RandanDTO
@@ -68,7 +69,7 @@ fun RCard(
                     ),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
-                fontSize = 32.sp
+                fontSize = 32.sp,
             )
             Column(
                 Modifier.padding(16.dp)
@@ -132,8 +133,11 @@ fun ExpenseCard(
                 Text(
                     name,
                     fontSize = 24.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                    maxLines = 1
                 )
-                Spacer(Modifier.weight(1f))
+                Spacer(Modifier.size(12.dp))
                 Text(
                     sum.toString(),
                     fontSize = 24.sp,
