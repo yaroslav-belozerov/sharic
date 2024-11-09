@@ -82,7 +82,7 @@ fun MainPage(
             )
 
             IconButton(onClick = {
-                if (!expanded) mainVM.fetchCardPeople()
+                //if (!expanded) mainVM.fetchCardPeople()
                 expanded = !expanded
             }) {
                 Icon(

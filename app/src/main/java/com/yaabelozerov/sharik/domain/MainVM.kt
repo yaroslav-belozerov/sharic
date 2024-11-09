@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import retrofit2.awaitResponse
 
 data class MainState(
@@ -51,15 +52,15 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
     }
 
     private suspend fun fetchRandans() {
-        val randans = api.getCurrentRandansByUserId(_state.value.userId, _state.value.token!!)
-        _state.update { it.copy(randans = randans) }
+//        val randans = api.getCurrentRandansByUserId(_state.value.userId, _state.value.token!!)
+        _state.update { it.copy(randans = emptyList()) }
     }
 
     private suspend fun fetchUser() {
-        val user = _state.value.token?.let { api.getUser(it) }
-        if (user != null) {
-            _userState.update { state -> state.copy(name = user.firstName, surname = user.lastName) }
-        }
+        //val user = _state.value.token?.let { api.getUser(it) }
+        //if (user != null) {
+        //    _userState.update { state -> state.copy(name = user.firstName, surname = user.lastName) }
+        //}
     }
 
     private suspend fun fetchToken() {
@@ -70,7 +71,7 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
         }
     }
 
-    suspend fun getUserById(id: Long) = api.getUserById(id, _state.value.token!!)
+    //suspend fun getUserById(id: Long) = api.getUserById(id, _state.value.token!!)
 
     private suspend fun setToken(token: String) {
         dataStore.saveToken(token)
@@ -79,58 +80,56 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
         }
     }
 
-    private suspend fun fetchCardValues() {
-        _state.update {
-            it.copy(
-                cardPreviews = Pair(
-                    api.totalDebtByUser(_state.value.userId, _state.value.token!!),
-                    api.totalProfitByUser(_state.value.userId, _state.value.token!!)
-                )
-            )
-        }
-    }
+//    private suspend fun fetchCardValues() {
+//        _state.update {
+//            it.copy(
+//                cardPreviews = Pair(
+//                    api.totalDebtByUser(_state.value.userId, _state.value.token!!),
+//                    api.totalProfitByUser(_state.value.userId, _state.value.token!!)
+//                )
+//            )
+//        }
+//    }
 
-    fun fetchCardPeople() {
-        viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    cardPeople = Pair(
-                        api.peopleToGiveMoneyByUser(0L, _state.value.token!!),
-                        api.peopleToRecieveMoneyByUser(0L, _state.value.token!!)
-                    )
-                )
-            }
-        }
-    }
+//    fun fetchCardPeople() {
+//        viewModelScope.launch {
+//            _state.update {
+//                it.copy(
+//                    cardPeople = Pair(
+//                        api.peopleToGiveMoneyByUser(0L, _state.value.token!!),
+//                        api.peopleToRecieveMoneyByUser(0L, _state.value.token!!)
+//                    )
+//                )
+//            }
+//        }
+//    }
 
     fun login(loginDTO: LoginDTO) {
         viewModelScope.launch {
-            setToken("token!!!")
-//            val resp = api.login(loginDTO).awaitResponse()
-//            if (resp.code() == 200) {
-//                setToken(resp.body()!!.token)
-//            } else {
-//                Log.e("login", "${resp.code()} ${resp.errorBody()}")
-//            }
+            try {
+                val resp = api.login(loginDTO)
+                setToken(resp.token)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     fun register(registerDTO: RegisterDTO) {
         viewModelScope.launch {
-            setToken("token <3")
-//            val resp = api.register(registerDTO).awaitResponse()
-//            if (resp.code() == 200) {
-//                setToken(resp.body()!!.token)
-//            } else {
-//                Log.e("register", "${resp.code()} ${resp.errorBody()}")
-//            }
+            try {
+                val resp = api.register(registerDTO)
+                setToken(resp.token)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
     fun addUserToRandan(randanId: Long) {
         viewModelScope.launch {
             _state.value.token?.let {
-                api.addUserToRandan(randanId, it)
+//                api.addUserToRandan(randanId, it)
             } ?: Log.e("addUserToRandan", "token null, randanId $randanId")
             //api.addUserToRandan(0L, _state.value.token!!)
         }

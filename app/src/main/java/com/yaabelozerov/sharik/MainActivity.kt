@@ -57,17 +57,28 @@ import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 val appModule = module {
     single { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-    single { if (!Const.MOCK) Retrofit.Builder().baseUrl(Const.BASE_URL).build().create(ApiService::class.java) else ApiServiceMock() }
+    single {
+        if (!Const.MOCK) Retrofit.Builder().baseUrl(Const.BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(get())).build()
+            .create(ApiService::class.java) else ApiServiceMock()
+    }
     single { DataStore(get()) }
     viewModelOf(::MainVM)
 }
 
-enum class Nav(val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String) {
-    MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи"),
-    SETTINGS("settings", Icons.Filled.Menu, Icons.Outlined.Menu, "Настройки")
+enum class Nav(
+    val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String
+) {
+    MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи"), SETTINGS(
+        "settings",
+        Icons.Filled.Menu,
+        Icons.Outlined.Menu,
+        "Настройки"
+    )
 }
 
 class MainActivity : ComponentActivity() {
@@ -82,7 +93,8 @@ class MainActivity : ComponentActivity() {
         }
 
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip: ClipData = ClipData.newPlainText("simple text", "http://sharik.ru/invite?randan_id=12345")
+        val clip: ClipData =
+            ClipData.newPlainText("simple text", "http://sharik.ru/invite?randan_id=12345")
 
 
         val mainVM = getViewModel<MainVM>()
@@ -101,40 +113,46 @@ class MainActivity : ComponentActivity() {
 
             AppTheme {
                 if (addRandanOpen) {
-                    AddRandanWidget(
-                        onDismissRequest = {addRandanOpen = false},
-                        onConfirmation = {mainVM}
-                    )
+                    AddRandanWidget(onDismissRequest = { addRandanOpen = false },
+                        onConfirmation = { mainVM })
                 }
                 val current = navCtrl.currentBackStackEntryAsState().value?.destination?.route
                 val token = mainVM.state.collectAsState().value.token
-                if (!token.isNullOrBlank()) Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
-                    BottomAppBar {
-                        Nav.entries.forEach {
-                            val selected = current == it.route
-                            NavigationBarItem(selected, icon = { Icon(if (selected) it.iconFilled else it.iconOutlined, null) }, onClick = {
-                                navCtrl.navigate(it.route)
+                if (!token.isNullOrBlank()) Scaffold(modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        BottomAppBar {
+                            Nav.entries.forEach {
+                                val selected = current == it.route
+                                NavigationBarItem(selected, icon = {
+                                    Icon(
+                                        if (selected) it.iconFilled else it.iconOutlined, null
+                                    )
+                                }, onClick = {
+                                    navCtrl.navigate(it.route)
+                                })
+                            }
+                        }
+                    },
+                    topBar = {
+                        Nav.entries.find { it.route == current }?.let {
+                            CenterAlignedTopAppBar(title = {
+                                Text(it.title)
                             })
                         }
-                    }
-                }, topBar = {
-                    Nav.entries.find { it.route == current }?.let {
-                        CenterAlignedTopAppBar(title = {
-                            Text(it.title)
-                        })
-                    }
-                }, floatingActionButton =  {
-                    FloatingActionButton(
-                        onClick = {
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(onClick = {
                             addRandanOpen = true
+                        }) {
+                            Icon(Icons.Filled.Add, contentDescription = null)
                         }
-                    ) {
-                        Icon(Icons.Filled.Add, contentDescription = null)
-                    }
-                }
-                    ) { innerPadding ->
+                    }) { innerPadding ->
 
-                    NavHost(modifier = Modifier.padding(innerPadding), navController = navCtrl, startDestination = Nav.MAIN.route) {
+                    NavHost(
+                        modifier = Modifier.padding(innerPadding),
+                        navController = navCtrl,
+                        startDestination = Nav.MAIN.route
+                    ) {
                         composable(Nav.MAIN.route) {
                             MainPage(mainVM) { clipboard.setPrimaryClip(clip) }
                         }
@@ -146,7 +164,9 @@ class MainActivity : ComponentActivity() {
                     }
                 } else if (token == "") {
                     Scaffold {
-                        AuthPage(modifier = Modifier.padding(it), onLogin = { mainVM.login(it) }, onRegister = { mainVM.register(it) })
+                        AuthPage(modifier = Modifier.padding(it),
+                            onLogin = { mainVM.login(it) },
+                            onRegister = { mainVM.register(it) })
                     }
                 }
             }

@@ -93,7 +93,7 @@ fun RCard(
                 activities.forEach {
                     var name: String? by remember { mutableStateOf(null) }
                     scope.launch {
-                        name = mainVM.getUserById(it.paidByUserId).username
+                        //name = mainVM.getUserById(it.paidByUserId).username
                     }
                     name?.let { name ->
                         ExpenseCard(
