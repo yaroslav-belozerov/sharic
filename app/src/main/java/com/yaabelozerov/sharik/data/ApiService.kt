@@ -59,7 +59,7 @@ class ApiServiceMock : ApiService {
                         0,
                         "пожрали)))",
                         1000f,
-                        listOf(Pair("Петрович", 200f), Pair("Данич", 800f)),
+                        listOf(Pair("Петрович", 200f), Pair("Данич", 800f), Pair("Залупа Иваныча", 0f)),
                         0
                     )
                 ),
