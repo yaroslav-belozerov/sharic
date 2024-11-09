@@ -29,21 +29,37 @@ data class MainState(
     val token: String? = null
 )
 
+data class UserState(
+    val name: String? = null,
+    val surname: String? = null
+)
+
 class MainVM(private val api: ApiService, private val dataStore: DataStore) : ViewModel() {
     private val _state = MutableStateFlow(MainState())
     val state = _state.asStateFlow()
+
+    private val _userState = MutableStateFlow(UserState())
+    val userState = _userState.asStateFlow()
 
     init {
         viewModelScope.launch {
             fetchToken()
             fetchCardValues()
             fetchRandans()
+            fetchUser()
         }
     }
 
     private suspend fun fetchRandans() {
         val randans = api.getCurrentRandansByUserId(_state.value.userId, _state.value.token!!)
         _state.update { it.copy(randans = randans) }
+    }
+
+    private suspend fun fetchUser() {
+        val user = _state.value.token?.let { api.getUser(it) }
+        if (user != null) {
+            _userState.update { state -> state.copy(name = user.firstName, surname = user.lastName) }
+        }
     }
 
     private suspend fun fetchToken() {
