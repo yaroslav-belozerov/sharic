@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -45,7 +46,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                         typedUsername = true
                     },
                     isError = !isUsernameValid && typedUsername,
-                    supportingText = { if (!isUsernameValid && typedUsername) Text("Логин должен содержать от 5 до 50 символов") })
+                    supportingText = { if (!isUsernameValid && typedUsername) Text("Логин должен содержать от 5 до 50 символов") }, shape = MaterialTheme.shapes.medium)
                 val isPasswordValid =
                     remember(loginDTO.password.length) { (loginDTO.password.length in 8..255) }
                 var typedPassword by remember { mutableStateOf(false) }
@@ -56,7 +57,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                         typedPassword = true
                     },
                     isError = !isPasswordValid && typedPassword,
-                    supportingText = { if (!isPasswordValid && typedPassword) Text("Пароль должен содержать от 8 до 50 символов") })
+                    supportingText = { if (!isPasswordValid && typedPassword) Text("Пароль должен содержать от 8 до 50 символов") }, shape = MaterialTheme.shapes.medium)
                 if (!loading) Button(onClick = {
                     onLogin(loginDTO)
                     loading = true
@@ -71,11 +72,11 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                 OutlinedTextField(registerDTO.firstName,
                     label = { Text("Имя") },
                     enabled = !loading,
-                    onValueChange = { registerDTO = registerDTO.copy(firstName = it) })
+                    onValueChange = { registerDTO = registerDTO.copy(firstName = it) }, shape = MaterialTheme.shapes.medium)
                 OutlinedTextField(registerDTO.lastName,
                     label = { Text("Фамилия") },
                     enabled = !loading,
-                    onValueChange = { registerDTO = registerDTO.copy(lastName = it) })
+                    onValueChange = { registerDTO = registerDTO.copy(lastName = it) }, shape = MaterialTheme.shapes.medium)
                 val isUsernameValid =
                     remember(registerDTO.username.length) { (registerDTO.username.length in 5..50) }
                 var typedUsername by remember { mutableStateOf(false) }
@@ -86,7 +87,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                         typedUsername = true
                     },
                     isError = !isUsernameValid && typedUsername,
-                    supportingText = { if (!isUsernameValid && typedUsername) Text("Логин должен содержать от 5 до 50 символов") })
+                    supportingText = { if (!isUsernameValid && typedUsername) Text("Логин должен содержать от 5 до 50 символов") }, shape = MaterialTheme.shapes.medium)
                 val isPasswordValid =
                     remember(registerDTO.password.length) { (registerDTO.password.length in 8..255) }
                 var typedPassword by remember { mutableStateOf(false) }
@@ -97,7 +98,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                         typedPassword = true
                     },
                     isError = !isPasswordValid && typedPassword,
-                    supportingText = { if (!isPasswordValid && typedPassword) Text("Пароль должен содержать от 8 до 50 символов") })
+                    supportingText = { if (!isPasswordValid && typedPassword) Text("Пароль должен содержать от 8 до 50 символов") }, shape = MaterialTheme.shapes.medium)
                 if (!loading) Button(onClick = {
                     onRegister(registerDTO)
                     loading = true
