@@ -11,6 +11,9 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
+    @POST("createRandan")
+    suspend fun createRandan(@Query("user_id") id: Long, @Header("Authorization") token: String)
+
     @GET("userById")
     suspend fun getUserById(@Query("user_id") id: Long,@Header("Authorization") token: String): UserDTO
 
@@ -60,6 +63,10 @@ interface ApiService {
 }
 
 class ApiServiceMock : ApiService {
+    override suspend fun createRandan(id: Long, token: String) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getUserById(id: Long, token: String): UserDTO {
         return UserDTO(
             0,

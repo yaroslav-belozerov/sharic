@@ -8,11 +8,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -20,6 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,6 +44,7 @@ import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.AuthPage
 import com.yaabelozerov.sharik.ui.MainPage
 import com.yaabelozerov.sharik.ui.theme.SharikTheme
+import com.yaabelozerov.sharik.ui.widgets.AddRandanWidget
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.startKoin
@@ -51,7 +60,8 @@ val appModule = module {
 }
 
 enum class Nav(val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String) {
-    MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи")
+    MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи"),
+    SETTINGS("settings", Icons.Filled.Menu, Icons.Outlined.Menu, "Настройки")
 }
 
 class MainActivity : ComponentActivity() {
@@ -68,8 +78,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             val mainVM = koinViewModel<MainVM>()
             val navCtrl = rememberNavController()
+            var addRandanOpen by remember { mutableStateOf(false) }
 
             SharikTheme {
+                if (addRandanOpen) {
+                    AddRandanWidget(
+                        onDismissRequest = {addRandanOpen = false},
+                        link = "s",
+                        onConfirmation = {mainVM}
+                    )
+                }
                 val current = navCtrl.currentBackStackEntryAsState().value?.destination?.route
                 val token = mainVM.state.collectAsState().value.token
                 if (!token.isNullOrBlank()) Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
@@ -87,7 +105,17 @@ class MainActivity : ComponentActivity() {
                             Text(it.title)
                         })
                     }
-                }) { innerPadding ->
+                }, floatingActionButton =  {
+                    FloatingActionButton(
+                        onClick = {
+                            addRandanOpen = true
+                        }
+                    ) {
+                        Icon(Icons.Filled.Add, contentDescription = null)
+                    }
+                }
+                    ) { innerPadding ->
+
                     NavHost(modifier = Modifier.padding(innerPadding), navController = navCtrl, startDestination = Nav.MAIN.route) {
                         composable(Nav.MAIN.route) {
                             MainPage(mainVM)
