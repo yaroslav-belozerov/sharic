@@ -58,8 +58,8 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
         _state.update {
             it.copy(
                 cardPreviews = Pair(
-                    api.totalDebtByUser(_state.value.userId),
-                    api.totalProfitByUser(_state.value.userId)
+                    api.totalDebtByUser(_state.value.userId, _state.value.token!!),
+                    api.totalProfitByUser(_state.value.userId, _state.value.token!!)
                 )
             )
         }
@@ -70,7 +70,8 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
             _state.update {
                 it.copy(
                     cardPeople = Pair(
-                        api.peopleToGiveMoneyByUser(0L), api.peopleToRecieveMoneyByUser(0L)
+                        api.peopleToGiveMoneyByUser(0L, _state.value.token!!),
+                        api.peopleToRecieveMoneyByUser(0L, _state.value.token!!)
                     )
                 )
             }
@@ -82,7 +83,7 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
             setToken("token!!!")
 //            val resp = api.login(loginDTO).awaitResponse()
 //            if (resp.code() == 200) {
-//                setToken(resp.body()!!)
+//                setToken(resp.body()!!.token)
 //            } else {
 //                Log.e("login", "${resp.code()} ${resp.errorBody()}")
 //            }
@@ -94,7 +95,7 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
             setToken("token <3")
 //            val resp = api.register(registerDTO).awaitResponse()
 //            if (resp.code() == 200) {
-//                setToken(resp.body()!!)
+//                setToken(resp.body()!!.token)
 //            } else {
 //                Log.e("register", "${resp.code()} ${resp.errorBody()}")
 //            }

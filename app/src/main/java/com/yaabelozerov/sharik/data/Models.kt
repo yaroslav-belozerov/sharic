@@ -20,3 +20,5 @@ data class RegisterDTO(
 )
 
 data class LoginDTO(val username: String = "", val password: String = "")
+
+data class TokenDTO(val token: String)
