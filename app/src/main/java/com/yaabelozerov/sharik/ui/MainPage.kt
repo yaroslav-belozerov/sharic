@@ -121,7 +121,7 @@ fun MainPage(
         val lst = mainVM.state.collectAsState().value.randans
         LazyColumn {
             items(lst) {
-                RCard(it, mainVM)
+                RCard(it, mainVM, {})
             }
         }
     }

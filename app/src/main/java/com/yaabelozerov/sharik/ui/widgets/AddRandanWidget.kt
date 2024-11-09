@@ -36,7 +36,8 @@ import androidx.compose.ui.window.Dialog
 fun AddRandanWidget(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
-    link: String
+    link: String,
+
 ) {
     var name by remember { mutableStateOf("") }
     Dialog(

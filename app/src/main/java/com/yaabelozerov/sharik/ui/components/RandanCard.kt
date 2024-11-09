@@ -20,6 +20,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -44,7 +45,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun RCard(
     randan: RandanDTO,
-    mainVM: MainVM
+    mainVM: MainVM,
+    onClickAdd: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val activities = randan.activities
@@ -52,25 +54,36 @@ fun RCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
-        border = BorderStroke(1.dp, Color.Black),
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
         Column {
-            Text(
-                text = randan.name,
-                modifier = Modifier
-                    .padding(
-                        16.dp,
-                        12.dp,
-                        0.dp,
-                        0.dp
-                    ),
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                fontSize = 32.sp,
-            )
+            Row {
+                Text(
+                    text = randan.name,
+                    modifier = Modifier
+                        .padding(
+                            16.dp,
+                            16.dp,
+                            0.dp,
+                            0.dp
+                        )
+                        .weight(1f),
+                    textAlign = TextAlign.Left,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 32.sp,
+
+                )
+                IconButton(
+                    onClick = onClickAdd,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(32.dp))
+                }
+
+            }
+
             Column(
                 Modifier.padding(16.dp)
             )  {
