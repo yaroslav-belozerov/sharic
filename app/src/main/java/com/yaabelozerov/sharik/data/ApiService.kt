@@ -58,10 +58,10 @@ interface ApiService {
 //        @Query("user_id") id: Long, @Header("Authorization") token: String
 //    ): List<Pair<UserDTO, Float>>
 
-    @POST("sign-up")
+    @POST("auth/sign-up")
     suspend fun register(@Body registerDTO: RegisterDTO): TokenDTO
 
-    @POST("login")
+    @POST("auth/sign-in")
     suspend fun login(@Body loginDTO: LoginDTO): TokenDTO
 
 //    @POST("addUserToRandan")
