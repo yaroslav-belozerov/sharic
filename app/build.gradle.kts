@@ -77,6 +77,7 @@ dependencies {
     implementation(libs.koin.compose.viewmodel.navigation)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.material.icons.extended)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
