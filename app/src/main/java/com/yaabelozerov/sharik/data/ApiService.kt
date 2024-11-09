@@ -1,6 +1,7 @@
 package com.yaabelozerov.sharik.data
 
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
@@ -15,6 +16,9 @@ interface ApiService {
 
     @GET("randanExpenses")
     suspend fun getExpensesByRandanId(@Query("randan_id") id: Long): List<ExpenseDTO>
+
+    @POST("randanExpensesa")
+    suspend fun addExpensesByRandanId(@Query("randan_id") id: Long)
 
     @GET("TotalDebt")
     suspend fun totalDebtByUser(@Query("user_id") id: Long): Float
@@ -68,6 +72,10 @@ class ApiServiceMock : ApiService {
     }
 
     override suspend fun getExpensesByRandanId(id: Long): List<ExpenseDTO> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun addExpensesByRandanId(id: Long) {
         TODO("Not yet implemented")
     }
 
