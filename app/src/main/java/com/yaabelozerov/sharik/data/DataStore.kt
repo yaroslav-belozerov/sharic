@@ -19,5 +19,5 @@ class DataStore(private val context: Context) {
             it[tokenKey] = token
         }
     }
-    fun getToken() = dataStore.data.map { it[tokenKey] }
+    fun getToken() = dataStore.data.map { it[tokenKey] ?: "" }
 }

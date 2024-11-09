@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,8 +33,10 @@ import com.yaabelozerov.sharik.data.ApiService
 import com.yaabelozerov.sharik.data.ApiServiceMock
 import com.yaabelozerov.sharik.data.DataStore
 import com.yaabelozerov.sharik.domain.MainVM
+import com.yaabelozerov.sharik.ui.AuthPage
 import com.yaabelozerov.sharik.ui.MainPage
 import com.yaabelozerov.sharik.ui.theme.SharikTheme
+import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModelOf
@@ -58,6 +61,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         startKoin {
+            androidContext(this@MainActivity)
             modules(appModule)
         }
 
@@ -67,7 +71,8 @@ class MainActivity : ComponentActivity() {
 
             SharikTheme {
                 val current = navCtrl.currentBackStackEntryAsState().value?.destination?.route
-                Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
+                val token = mainVM.state.collectAsState().value.token
+                if (!token.isNullOrBlank()) Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
                     BottomAppBar {
                         Nav.entries.forEach {
                             val selected = current == it.route
@@ -87,6 +92,10 @@ class MainActivity : ComponentActivity() {
                         composable(Nav.MAIN.route) {
                             MainPage(mainVM)
                         }
+                    }
+                } else if (token == "") {
+                    Scaffold {
+                        AuthPage(modifier = Modifier.padding(it), onLogin = { mainVM.login(it) }, onRegister = { mainVM.register(it) })
                     }
                 }
             }

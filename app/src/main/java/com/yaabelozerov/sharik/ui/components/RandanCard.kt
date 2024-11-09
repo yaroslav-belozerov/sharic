@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -30,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yaabelozerov.sharik.data.ExpenseDTO
 import com.yaabelozerov.sharik.data.RandanDTO
 import com.yaabelozerov.sharik.domain.MainVM
 import kotlinx.coroutines.launch
@@ -41,7 +39,7 @@ fun RCard(
     mainVM: MainVM
 ) {
     val scope = rememberCoroutineScope()
-    val expenses = randan.expenses
+    val activities = randan.activities
     OutlinedCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -68,10 +66,10 @@ fun RCard(
             Column(
                 Modifier.padding(16.dp)
             )  {
-                expenses.forEach {
+                activities.forEach {
                     var name: String = "pipec"
                     scope.launch {
-                        name = mainVM.getUserById(it.paidByUserId).name
+                        name = mainVM.getUserById(it.paidByUserId).username
                     }
                     ExpenseCard(
                         name = it.name,

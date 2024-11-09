@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
@@ -46,9 +44,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yaabelozerov.sharik.data.User
+import com.yaabelozerov.sharik.data.UserDTO
 import com.yaabelozerov.sharik.domain.MainVM
-import com.yaabelozerov.sharik.ui.components.RCard
 import kotlin.math.exp
 
 @Composable
@@ -69,10 +66,11 @@ fun MainPage(
         ) {
             Text(
                 text = "Долги", // TODO String res
-                 fontSize = 18.sp
+                fontSize = 18.sp
             )
             Box(
-                modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                modifier = Modifier
+                    .padding(start = 16.dp, end = 8.dp)
                     .height(4.dp)
                     .weight(1f)
                     .clip(MaterialTheme.shapes.medium)
@@ -102,19 +100,19 @@ fun MainPage(
             val (profit, debt) = mainVM.state.collectAsState().value.cardPreviews
             val (profitPeople, debtPeople) = mainVM.state.collectAsState().value.cardPeople
             DebtCard(
-                MaterialTheme.colorScheme.tertiaryContainer, "Мне", profit.toString(), expanded, profitPeople
+                MaterialTheme.colorScheme.tertiaryContainer,
+                "Мне",
+                profit.toString(),
+                expanded,
+                profitPeople
             )
             DebtCard(
-                MaterialTheme.colorScheme.errorContainer, "Мои", debt.toString(), expanded, debtPeople
+                MaterialTheme.colorScheme.errorContainer,
+                "Мои",
+                debt.toString(),
+                expanded,
+                debtPeople
             )
-        }
-
-
-        val lst = mainVM.state.collectAsState().value.randans
-        LazyColumn {
-            items(lst) {
-                RCard(it, mainVM)
-            }
         }
     }
 
@@ -126,7 +124,7 @@ fun RowScope.DebtCard(
     text: String,
     value: String,
     expanded: Boolean,
-    people: List<Pair<User, Float>>
+    people: List<Pair<UserDTO, Float>>
 ) {
     Card(
         Modifier.weight(1f), colors = CardDefaults.cardColors(
@@ -149,7 +147,12 @@ fun RowScope.DebtCard(
             Column(Modifier.padding(top = 16.dp)) {
                 people.forEach {
                     Row {
-                        Text(it.first.name, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f), maxLines = 1)
+                        Text(
+                            it.first.username,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f),
+                            maxLines = 1
+                        )
                         Spacer(Modifier.width(8.dp))
                         Text(it.second.toString())
                     }
