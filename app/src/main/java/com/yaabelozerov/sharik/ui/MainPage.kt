@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
@@ -46,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yaabelozerov.sharik.data.UserDTO
 import com.yaabelozerov.sharik.domain.MainVM
+import com.yaabelozerov.sharik.ui.components.RCard
 import kotlin.math.exp
 
 @Composable
@@ -113,6 +116,13 @@ fun MainPage(
                 expanded,
                 debtPeople
             )
+        }
+
+        val lst = mainVM.state.collectAsState().value.randans
+        LazyColumn {
+            items(lst) {
+                RCard(it, mainVM)
+            }
         }
     }
 
