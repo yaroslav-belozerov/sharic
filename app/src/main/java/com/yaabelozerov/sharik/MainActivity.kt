@@ -49,6 +49,8 @@ import com.yaabelozerov.sharik.ui.AuthPage
 import com.yaabelozerov.sharik.ui.MainPage
 import com.yaabelozerov.sharik.ui.components.SettingPage
 import com.yaabelozerov.sharik.ui.widgets.AddRandanWidget
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -60,14 +62,27 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 
 val appModule = module {
     single { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-    single {Retrofit.Builder().baseUrl(Const.BASE_URL).addConverterFactory(MoshiConverterFactory.create(get())).build().create(ApiService::class.java) }
+    single {
+        Retrofit.Builder().client(
+            OkHttpClient.Builder()
+                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+                .build()
+        ).baseUrl(Const.BASE_URL).addConverterFactory(MoshiConverterFactory.create(get())).build()
+            .create(ApiService::class.java)
+    }
     single { DataStore(get()) }
     viewModelOf(::MainVM)
 }
 
-enum class Nav(val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String) {
-    MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи"),
-    SETTINGS("settings", Icons.Filled.Menu, Icons.Outlined.Menu, "Настройки")
+enum class Nav(
+    val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String
+) {
+    MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи"), SETTINGS(
+        "settings",
+        Icons.Filled.Menu,
+        Icons.Outlined.Menu,
+        "Настройки"
+    )
 }
 
 class MainActivity : ComponentActivity() {
