@@ -12,8 +12,8 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
-    @POST("randan")
-    suspend fun createRandan(@Query("user_id") id: Long, @Header("Authorization") token: String)
+    @POST("randan/")
+    suspend fun createRandan(@Body randan: CreateRandanRequest, @Header("Authorization") token: String)
 
     @GET("user/")
     suspend fun getUser(@Header("Authorization") token: String): User

@@ -4,11 +4,19 @@ import com.squareup.moshi.Json
 
 typealias Randans = List<Randan>;
 
+data class CreateRandanRequest(
+    val name: String,
+    val activities: List<Activity>,
+    val debts: List<Debt>,
+    val users: List<User>,
+    val isFinished: Boolean,
+)
+
 data class Randan(
     val id: String,
     val name: String,
     val activities: List<Activity>,
-    // val debts: List<Debt>,
+    val debts: List<Debt>,
     val users: List<User>,
     val isFinished: Boolean,
 )

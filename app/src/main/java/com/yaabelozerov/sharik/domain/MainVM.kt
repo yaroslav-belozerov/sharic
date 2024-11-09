@@ -1,10 +1,14 @@
 package com.yaabelozerov.sharik.domain
 
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.squareup.moshi.Moshi
 import com.yaabelozerov.sharik.data.ApiService
+import com.yaabelozerov.sharik.data.CreateRandanRequest
 import com.yaabelozerov.sharik.data.DataStore
 import com.yaabelozerov.sharik.data.LoginDTO
 import com.yaabelozerov.sharik.data.Randan
@@ -38,7 +42,7 @@ data class UserState(
     val surname: String? = null
 )
 
-class MainVM(private val api: ApiService, private val dataStore: DataStore) : ViewModel() {
+class MainVM(private val api: ApiService, private val dataStore: DataStore, private val moshi: Moshi) : ViewModel() {
     private val _state = MutableStateFlow(MainState())
     val state = _state.asStateFlow()
 
@@ -140,6 +144,15 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
                 api.addUserToRandan(randanId, it)
             } ?: Log.e("addUserToRandan", "token null, randanId $randanId")
             //api.addUserToRandan(0L, _state.value.token!!)
+        }
+    }
+
+    fun createRandan(name: String) {
+        viewModelScope.launch {
+            _state.value.token?.let {
+                api.createRandan(CreateRandanRequest(name, emptyList(), emptyList(), emptyList(), false), it)
+            } ?: Log.e("createRandan", "token null")
+            fetchRandans()
         }
     }
 }
