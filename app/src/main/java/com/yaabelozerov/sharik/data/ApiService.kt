@@ -12,7 +12,7 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ApiService {
-    @POST("createRandan")
+    @POST("randan")
     suspend fun createRandan(@Query("user_id") id: Long, @Header("Authorization") token: String)
 
     @GET("user/")
@@ -21,7 +21,7 @@ interface ApiService {
     @GET("userById")
     suspend fun getUserById(@Query("user_id") id: Long,@Header("Authorization") token: String): User
 
-    @GET("randan/")
+    @GET("randan")
     suspend fun getRandansByUser(@Header("Authorization") token: String
     ): List<Randan>
 
