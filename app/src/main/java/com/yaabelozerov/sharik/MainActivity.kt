@@ -43,7 +43,6 @@ import com.example.compose.AppTheme
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.yaabelozerov.sharik.data.ApiService
-import com.yaabelozerov.sharik.data.ApiServiceMock
 import com.yaabelozerov.sharik.data.DataStore
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.AuthPage
