@@ -6,17 +6,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -64,37 +67,27 @@ fun RCard(
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Column {
+        Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(
-                    16.dp,
-                    16.dp,
-                    0.dp,
-                    0.dp
-                )
             ) {
                 Text(
                     text = randan.name,
                     modifier = Modifier
-
-                        .weight(1f),
+                        .weight(1f).padding(start = 8.dp),
                     textAlign = TextAlign.Left,
                     fontWeight = FontWeight.Bold,
                     fontSize = 32.sp,
-
                 )
                 IconButton(
                     onClick = onClickAdd,
-                    modifier = Modifier.padding(8.dp)
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(32.dp))
                 }
-
             }
 
             Column(
-                Modifier.padding(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             )  {
                 activities.forEach {
                     var name: String? by remember { mutableStateOf(null) }
@@ -109,19 +102,15 @@ fun RCard(
                             sum = it.sum
                         )
                     }
-                    Spacer(Modifier.size(4.dp))
-
                 }
                 Button(
                     onClick = { addActivityDialogOpen = true },
-                    Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.tertiary,
-                        disabledContentColor = MaterialTheme.colorScheme.onTertiary,
-                        disabledContainerColor = MaterialTheme.colorScheme.onTertiaryContainer
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.secondary
                     )
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = null)
@@ -129,8 +118,6 @@ fun RCard(
             }
 
         }
-
-
     }
 }
 
@@ -149,7 +136,7 @@ fun ExpenseCard(
     ) {
         Column(
             Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row {
                 Text(
@@ -166,23 +153,18 @@ fun ExpenseCard(
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(Modifier.size(4.dp))
             Row(
                 Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Default.AttachMoney, contentDescription = null, Modifier.size(24.dp))
-                Text(paidBy, fontSize = 18.sp)
+                Icon(Icons.Default.AttachMoney, contentDescription = null, Modifier.size(24.dp), tint = MaterialTheme.colorScheme.tertiary)
+                Text(paidBy, fontSize = 18.sp, color = MaterialTheme.colorScheme.tertiary)
             }
-            Spacer(Modifier.size(4.dp))
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 items(needToPay) {
-                    Column(
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(it.first, fontSize = 18.sp,)
+                    Column {
+                        Text(it.first, fontSize = 18.sp)
                         Text(it.second.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                        Spacer(Modifier.size(2.dp))
                     }
                 }
             }
