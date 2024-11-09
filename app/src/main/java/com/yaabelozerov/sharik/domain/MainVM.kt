@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.squareup.moshi.Moshi
 import com.yaabelozerov.sharik.data.ApiService
+import com.yaabelozerov.sharik.data.CreateActivityRequest
 import com.yaabelozerov.sharik.data.CreateRandanRequest
 import com.yaabelozerov.sharik.data.DataStore
 import com.yaabelozerov.sharik.data.LoginDTO
@@ -144,6 +145,12 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
                 api.addUserToRandan(randanId, it)
             } ?: Log.e("addUserToRandan", "token null, randanId $randanId")
             //api.addUserToRandan(0L, _state.value.token!!)
+        }
+    }
+
+    fun sendActivity(request: CreateActivityRequest) {
+        viewModelScope.launch {
+            _state.value.token?.let { api.createActivity(it, request) }
         }
     }
 

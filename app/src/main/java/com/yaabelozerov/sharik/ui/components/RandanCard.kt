@@ -59,7 +59,7 @@ fun RCard(
     val activities = randan.activities
     var addActivityDialogOpen by remember { mutableStateOf(false) }
 
-    if (addActivityDialogOpen) AddActivityidget(onDismissRequest = { addActivityDialogOpen = false}, onConfirmation = {}, randan.users)
+    if (addActivityDialogOpen) AddActivityidget(onDismissRequest = { addActivityDialogOpen = false}, onConfirmation = {}, randan.users, mainVM, randan)
 
     OutlinedCard(
         colors = CardDefaults.cardColors(
@@ -100,7 +100,8 @@ fun RCard(
                         )
                 }
                 Button(
-                    onClick = { addActivityDialogOpen = true },
+                    onClick = { addActivityDialogOpen = true
+                                },
                     shape = MaterialTheme.shapes.medium,
                     modifier = Modifier
                         .fillMaxWidth(),

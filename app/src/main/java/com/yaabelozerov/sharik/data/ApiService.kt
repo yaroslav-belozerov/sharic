@@ -15,11 +15,11 @@ interface ApiService {
     @POST("randan")
     suspend fun createRandan(@Body randan: CreateRandanRequest, @Header("Authorization") token: String)
 
-    @GET("user/g")
+    @GET("user")
     suspend fun getUser(@Header("Authorization") token: String): User
 
-    @GET("userById")
-    suspend fun getUserById(@Query("user_id") id: Long,@Header("Authorization") token: String): User
+    @POST("activity")
+    suspend fun createActivity(@Header("Authorization") token: String, @Body request: CreateActivityRequest)
 
     @GET("randan")
     suspend fun getRandansByUser(@Header("Authorization") token: String
