@@ -1,5 +1,8 @@
 package com.yaabelozerov.sharik
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.media.Image
 import android.os.Bundle
 import android.util.Log
@@ -77,6 +80,10 @@ class MainActivity : ComponentActivity() {
             modules(appModule)
         }
 
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip: ClipData = ClipData.newPlainText("simple text", "http://sharik.ru/invite?randan_id=12345")
+
+
         val mainVM = getViewModel<MainVM>()
 
         intent.data?.let { data ->
@@ -129,7 +136,7 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(modifier = Modifier.padding(innerPadding), navController = navCtrl, startDestination = Nav.MAIN.route) {
                         composable(Nav.MAIN.route) {
-                            MainPage(mainVM)
+                            MainPage(mainVM) { clipboard.setPrimaryClip(clip) }
                         }
                     }
                 } else if (token == "") {

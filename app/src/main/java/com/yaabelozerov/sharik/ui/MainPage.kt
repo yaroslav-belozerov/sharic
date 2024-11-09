@@ -53,7 +53,8 @@ import kotlin.math.exp
 
 @Composable
 fun MainPage(
-    mainVM: MainVM
+    mainVM: MainVM,
+    onClick: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var arrowDeg = animateFloatAsState(if (expanded) 180f else 0f, animationSpec = tween(400))
@@ -121,7 +122,7 @@ fun MainPage(
         val lst = mainVM.state.collectAsState().value.randans
         LazyColumn {
             items(lst) {
-                RCard(it, mainVM, {})
+                RCard(it, mainVM, onClick)
             }
         }
     }
