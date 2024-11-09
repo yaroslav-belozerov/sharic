@@ -44,7 +44,7 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
     init {
         viewModelScope.launch {
             fetchToken()
-            fetchCardValues()
+            //fetchCardValues()
             fetchRandans()
             fetchUser()
         }

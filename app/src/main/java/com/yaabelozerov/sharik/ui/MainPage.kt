@@ -61,7 +61,7 @@ fun MainPage(
     Column(
         Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top
     ) {
-        Row(
+        if (false) Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = 16.dp, start = 32.dp),
@@ -95,7 +95,7 @@ fun MainPage(
             }
         }
 
-        Row(
+        if (false) Row(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),

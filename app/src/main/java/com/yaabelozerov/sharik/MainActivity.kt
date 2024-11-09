@@ -39,6 +39,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.compose.AppTheme
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.yaabelozerov.sharik.data.ApiService
@@ -48,7 +49,6 @@ import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.AuthPage
 import com.yaabelozerov.sharik.ui.MainPage
 import com.yaabelozerov.sharik.ui.components.SettingPage
-import com.yaabelozerov.sharik.ui.theme.SharikTheme
 import com.yaabelozerov.sharik.ui.widgets.AddRandanWidget
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.ext.android.getViewModel
@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity() {
             val navCtrl = rememberNavController()
             var addRandanOpen by remember { mutableStateOf(false) }
 
-            SharikTheme {
+            AppTheme {
                 if (addRandanOpen) {
                     AddRandanWidget(
                         onDismissRequest = {addRandanOpen = false},
