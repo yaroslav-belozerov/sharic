@@ -38,9 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 
 @Composable
-fun AddRandanWidget(
+fun AddActivityidget(
     onDismissRequest: () -> Unit,
-    onConfirmation: (String) -> Unit
+    onConfirmation: (String) -> Unit,
 ) {
     var name by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -60,7 +60,7 @@ fun AddRandanWidget(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 LaunchedEffect(null) { focusRequester.requestFocus() }
-                Text("Создать Кутёж", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text("Создать Трату", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(focusRequester),
                     value = name,
