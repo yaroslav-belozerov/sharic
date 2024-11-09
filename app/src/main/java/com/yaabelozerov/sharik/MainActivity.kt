@@ -161,10 +161,12 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     floatingActionButton = {
-                        FloatingActionButton(onClick = {
-                            addRandanOpen = true
-                        }) {
-                            Icon(Icons.Filled.Add, contentDescription = null)
+                        if (current == Nav.MAIN.route) {
+                            FloatingActionButton(onClick = {
+                                addRandanOpen = true
+                            }) {
+                                Icon(Icons.Filled.Add, contentDescription = null)
+                            }
                         }
                     }) { innerPadding ->
 
