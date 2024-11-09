@@ -10,7 +10,7 @@ data class Randan(
     val activities: List<Activity>,
     // val debts: List<Debt>,
     val users: List<User>,
-    val isFinished: String,
+    val isFinished: Boolean,
 )
 
 data class Activity(

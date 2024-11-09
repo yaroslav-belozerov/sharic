@@ -12,8 +12,11 @@ import com.yaabelozerov.sharik.data.RegisterDTO
 import com.yaabelozerov.sharik.data.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -44,14 +47,17 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
 
     init {
         viewModelScope.launch {
-            fetchToken()
             //fetchCardValues()
-            fetchRandans()
-            fetchUser()
+            dataStore.getToken().distinctUntilChanged().collect { tok ->
+                _state.update { it.copy(token = tok) }
+                Log.i("token", tok)
+                fetchRandans()
+                fetchUser()
+            }
         }
     }
 
-    private suspend fun fetchRandans() {
+    suspend fun fetchRandans() {
         try {
             val randans = api.getRandansByUser(_state.value.token!!)
             _state.update { it.copy(randans = randans) }
@@ -61,7 +67,7 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
         }
     }
 
-    private suspend fun fetchUser() {
+    suspend fun fetchUser() {
         try {
             val user = _state.value.token?.let { api.getUser(it) }
             if (user != null) {
@@ -78,19 +84,8 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
         }
     }
 
-    private suspend fun fetchToken() {
-        dataStore.getToken().first().let {
-            _state.update { state ->
-                state.copy(token = it)
-            }
-        }
-    }
-
     private suspend fun setToken(token: String) {
-        dataStore.saveToken(token)
-        _state.update { state ->
-            state.copy(token = token)
-        }
+        dataStore.saveToken("Bearer $token")
     }
 
     private suspend fun fetchCardValues() {
