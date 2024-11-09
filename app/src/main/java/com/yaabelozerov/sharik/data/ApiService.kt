@@ -77,16 +77,16 @@ class ApiServiceMock : ApiService {
                 listOf(
                     ActivityDTO(
                         0,
-                        "пожрали)))",
+                        "Покушали",
                         1000f,
                         listOf(Pair("Петрович", 200f), Pair("Данич", 800f)),
                         0
                     ),
                     ActivityDTO(
                         0,
-                        "пожрали)))",
+                        "Ещё раз покушали",
                         1000f,
-                        listOf(Pair("Петрович", 200f), Pair("Данич", 800f), Pair("Залупа Иваныча", 0f)),
+                        listOf(Pair("Петрович", 200f), Pair("Данич", 700f), Pair("Антон", 100f)),
                         0
                     )
                 ),

@@ -1,5 +1,6 @@
 package com.yaabelozerov.sharik.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
@@ -22,7 +24,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -67,16 +74,18 @@ fun RCard(
                 Modifier.padding(16.dp)
             )  {
                 activities.forEach {
-                    var name: String = "pipec"
+                    var name: String? by remember { mutableStateOf(null) }
                     scope.launch {
                         name = mainVM.getUserById(it.paidByUserId).username
                     }
-                    ExpenseCard(
-                        name = it.name,
-                        paidBy = name,
-                        needToPay = it.users,
-                        sum = it.sum
-                    )
+                    name?.let { name ->
+                        ExpenseCard(
+                            name = it.name,
+                            paidBy = name,
+                            needToPay = it.users,
+                            sum = it.sum
+                        )
+                    }
                     Spacer(Modifier.size(4.dp))
 
                 }
@@ -116,13 +125,13 @@ fun ExpenseCard(
         ),
     ) {
         Column(
-            Modifier.padding(16.dp)
+            Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row {
                 Text(
                     name,
                     fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
                 )
                 Spacer(Modifier.weight(1f))
                 Text(
@@ -134,26 +143,23 @@ fun ExpenseCard(
             Spacer(Modifier.size(4.dp))
             Row(
                 Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Оплачено:", fontSize = 18.sp,) //Todo res
-                Text(paidBy, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Icon(Icons.Default.AttachMoney, contentDescription = null, Modifier.size(24.dp))
+                Text(paidBy, fontSize = 18.sp)
             }
             Spacer(Modifier.size(4.dp))
-            LazyRow {
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(needToPay) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center
+                    Column(
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Text("${it.first}:", fontSize = 18.sp,)
-                        Text(it.second.toString()+", ", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text(it.first, fontSize = 18.sp,)
+                        Text(it.second.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
                         Spacer(Modifier.size(2.dp))
                     }
                 }
-
             }
-
         }
     }
 }
