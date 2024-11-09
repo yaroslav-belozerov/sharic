@@ -59,7 +59,7 @@ fun RCard(
     val activities = randan.activities
     var addActivityDialogOpen by remember { mutableStateOf(false) }
 
-    if (addActivityDialogOpen) AddActivityidget(onDismissRequest = { addActivityDialogOpen = false}, onConfirmation = {})
+    if (addActivityDialogOpen) AddActivityidget(onDismissRequest = { addActivityDialogOpen = false}, onConfirmation = {}, randan.users)
 
     OutlinedCard(
         colors = CardDefaults.cardColors(

@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -36,16 +37,24 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.yaabelozerov.sharik.data.User
+import okhttp3.internal.toImmutableList
 
 @Composable
 fun AddActivityidget(
     onDismissRequest: () -> Unit,
     onConfirmation: (String) -> Unit,
+    userList: List<User>,
 ) {
     var name by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
+    var sum by remember { mutableStateOf(1000f) }
+    var userAmount by remember { mutableStateOf(mapOf<String, Float>()) }
+
+
     Dialog(
-        onDismissRequest = onDismissRequest) {
+        onDismissRequest = onDismissRequest
+    ) {
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -70,6 +79,34 @@ fun AddActivityidget(
                     }, shape = MaterialTheme.shapes.medium
                 )
 
+                Column {
+                    OutlinedTextField(
+                        value = sum.toString(),
+                        onValueChange = { sum = it.toFloat() }
+
+                    )
+                    userList.forEach {
+                        Row() {
+                            Checkbox(
+                                onCheckedChange = {},
+                                checked = false
+                            )
+                            Text(it.firstName + " " + it.lastName)
+                            Spacer(Modifier.weight(1f))
+                            OutlinedTextField(
+                                onValueChange = { it1 ->
+                                    userAmount =
+                                        userAmount.plus(it.username to (it1.toFloatOrNull() ?: 0f))
+
+                                },
+                                value = userAmount[it.username]?.toString() ?: "0",
+
+
+                                )
+                        }
+                    }
+                }
+
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     TextButton(
                         onClick = onDismissRequest
@@ -83,6 +120,7 @@ fun AddActivityidget(
                         Text("Создать")
                     }
                 }
+
 
             }
         }
