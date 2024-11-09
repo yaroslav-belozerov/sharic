@@ -65,16 +65,19 @@ fun RCard(
             .padding(16.dp)
     ) {
         Column {
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(
+                    16.dp,
+                    16.dp,
+                    0.dp,
+                    0.dp
+                )
+            ) {
                 Text(
                     text = randan.name,
                     modifier = Modifier
-                        .padding(
-                            16.dp,
-                            16.dp,
-                            0.dp,
-                            0.dp
-                        )
+
                         .weight(1f),
                     textAlign = TextAlign.Left,
                     fontWeight = FontWeight.Bold,
