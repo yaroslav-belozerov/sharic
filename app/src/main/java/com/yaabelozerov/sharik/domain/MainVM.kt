@@ -13,6 +13,7 @@ import com.yaabelozerov.sharik.data.UserDTO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -36,7 +37,13 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
         viewModelScope.launch {
             fetchToken()
             fetchCardValues()
+            fetchRandans()
         }
+    }
+
+    private suspend fun fetchRandans() {
+        val randans = api.getCurrentRandansByUserId(_state.value.userId, _state.value.token!!)
+        _state.update { it.copy(randans = randans) }
     }
 
     private suspend fun fetchToken() {
@@ -46,6 +53,8 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore) : Vi
             }
         }
     }
+
+    suspend fun getUserById(id: Long) = api.getUserById(id, _state.value.token!!)
 
     private suspend fun setToken(token: String) {
         dataStore.saveToken(token)

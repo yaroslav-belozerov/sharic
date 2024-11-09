@@ -1,8 +1,10 @@
 package com.yaabelozerov.sharik.ui
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +26,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.yaabelozerov.sharik.data.UserDTO
 import com.yaabelozerov.sharik.domain.MainVM
+import kotlin.math.exp
 
 @Composable
 fun MainPage(
@@ -115,7 +120,11 @@ fun MainPage(
 
 @Composable
 fun RowScope.DebtCard(
-    color: Color, text: String, value: String, expanded: Boolean, people: List<Pair<UserDTO, Float>>
+    color: Color,
+    text: String,
+    value: String,
+    expanded: Boolean,
+    people: List<Pair<UserDTO, Float>>
 ) {
     Card(
         Modifier.weight(1f), colors = CardDefaults.cardColors(
