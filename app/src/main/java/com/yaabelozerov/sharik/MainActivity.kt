@@ -79,10 +79,7 @@ enum class Nav(
     val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String
 ) {
     MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи"), SETTINGS(
-        "settings",
-        Icons.Filled.Menu,
-        Icons.Outlined.Menu,
-        "Настройки"
+        "settings", Icons.Filled.Menu, Icons.Outlined.Menu, "Настройки"
     )
 }
 
@@ -118,8 +115,10 @@ class MainActivity : ComponentActivity() {
 
             AppTheme {
                 if (addRandanOpen) {
-                    AddRandanWidget(onDismissRequest = { addRandanOpen = false },
-                        onConfirmation = { mainVM })
+                    AddRandanWidget(onDismissRequest = { addRandanOpen = false }, onConfirmation = {
+                        mainVM.createRandan(it)
+                        addRandanOpen = false
+                    })
                 }
                 val current = navCtrl.currentBackStackEntryAsState().value?.destination?.route
                 val token = mainVM.state.collectAsState().value.token
