@@ -128,6 +128,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navCtrl = rememberNavController()
             var addRandanOpen by remember { mutableStateOf(false) }
+            var actualRandan by remember { mutableStateOf("") }
 
             AppTheme {
                 if (addRandanOpen) {
