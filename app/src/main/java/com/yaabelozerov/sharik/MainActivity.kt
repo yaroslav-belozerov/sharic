@@ -102,7 +102,6 @@ class MainActivity : ComponentActivity() {
                 if (addRandanOpen) {
                     AddRandanWidget(
                         onDismissRequest = {addRandanOpen = false},
-                        link = "s",
                         onConfirmation = {mainVM}
                     )
                 }

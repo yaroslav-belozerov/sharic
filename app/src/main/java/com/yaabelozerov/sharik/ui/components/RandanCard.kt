@@ -38,8 +38,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.yaabelozerov.sharik.data.RandanDTO
 import com.yaabelozerov.sharik.domain.MainVM
+import com.yaabelozerov.sharik.ui.widgets.AddActivityidget
 import kotlinx.coroutines.launch
 
 @Composable
@@ -50,6 +52,10 @@ fun RCard(
 ) {
     val scope = rememberCoroutineScope()
     val activities = randan.activities
+    var addActivityDialogOpen by remember { mutableStateOf(false) }
+
+    if (addActivityDialogOpen) AddActivityidget(onDismissRequest = { addActivityDialogOpen = false}, onConfirmation = {})
+
     OutlinedCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -104,7 +110,7 @@ fun RCard(
 
                 }
                 Button(
-                    onClick = {},
+                    onClick = { addActivityDialogOpen = true },
                     Modifier
                         .fillMaxWidth()
                         .height(48.dp),
