@@ -26,7 +26,6 @@ data class Activity(
     val name: String,
     val sum: Long,
     val pays: Pays,
-    val randan: String,
     val owes: List<Owe>,
 )
 
