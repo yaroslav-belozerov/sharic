@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,6 +37,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
@@ -58,8 +61,8 @@ fun AddActivityidget(
 ) {
     var name by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
-    var sum by remember { mutableStateOf(1000) }
-    var userAmount by remember { mutableStateOf(mapOf<String, Int>()) }
+    var sum by remember { mutableStateOf<Float?>(null) }
+    var userAmount by remember { mutableStateOf(mapOf<String, Float>()) }
     var scope = rememberCoroutineScope()
 
 
@@ -93,6 +96,21 @@ fun AddActivityidget(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                        userAmount = userAmount.keys.associateWith { (sum ?: 0f) / userAmount.size }
+                    }) { Text("Разделить поровну") }
+                    OutlinedTextField(value = sum?.toString() ?: "",
+                        onValueChange = {
+                            try {
+                                sum = it.toFloat()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        label = { Text("Cумма") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                    )
                     userList.forEach {
                         mainVM.userState.collectAsState().value?.username.let { user ->
                             if (user != it.username) {
@@ -116,28 +134,22 @@ fun AddActivityidget(
                                     Spacer(Modifier.size(12.dp))
                                     OutlinedTextField(
                                         onValueChange = { it1 ->
-                                            userAmount = userAmount.plus(
-                                                it.username to (it1.toIntOrNull() ?: 0)
-                                            )
+                                            try {
+                                                userAmount = userAmount.plus(
+                                                    it.username to it1.toFloat()
+                                                )
+                                            }catch (e: Exception) { e.printStackTrace() }
                                         },
-                                        value = userAmount[it.username]?.toString() ?: "0",
-                                        modifier = Modifier.width(100.dp),
-                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                                        value = userAmount[it.username]?.toString() ?: "",
+                                        modifier = Modifier.width(72.dp),
                                         shape = MaterialTheme.shapes.medium
-
                                     )
                                 }
                             }
                         }
 
                     }
-                    OutlinedTextField(value = sum.toString(),
-                        onValueChange = { sum = it.toInt() },
-                        shape = MaterialTheme.shapes.medium,
-                        label = { Text("Cумма") },
-                        singleLine = true
-
-                    )
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -149,14 +161,16 @@ fun AddActivityidget(
                     Button(
                         onClick = {
                             onDismissRequest()
-                            mainVM.sendActivity(request = CreateActivityRequest(name = name,
-                                sum = sum,
-                                randanId = randan.id,
-                                debts = userAmount.map {
-                                    DebtRequest(
-                                        it.key, (it.value).toInt()
-                                    )
-                                }))
+                            mainVM.sendActivity(
+                                request = CreateActivityRequest(name = name,
+                                    sum = sum?.times(100)?.toInt() ?: 0,
+                                    randanId = randan.id,
+                                    debts = userAmount.map {
+                                        DebtRequest(
+                                            it.key, (it.value * 100).toInt()
+                                        )
+                                    })
+                            )
                         }, modifier = Modifier.weight(1f)
                     ) {
                         Text("Создать")
