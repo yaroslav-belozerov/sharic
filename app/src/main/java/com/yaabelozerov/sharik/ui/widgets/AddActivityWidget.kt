@@ -25,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -44,6 +45,7 @@ import com.yaabelozerov.sharik.data.DebtRequest
 import com.yaabelozerov.sharik.data.Randan
 import com.yaabelozerov.sharik.data.User
 import com.yaabelozerov.sharik.domain.MainVM
+import kotlinx.coroutines.launch
 import okhttp3.internal.toImmutableList
 
 @Composable
@@ -58,6 +60,7 @@ fun AddActivityidget(
     val focusRequester = remember { FocusRequester() }
     var sum by remember { mutableStateOf(1000) }
     var userAmount by remember { mutableStateOf(mapOf<String, Float>()) }
+    var scope = rememberCoroutineScope()
 
 
     Dialog(
@@ -91,39 +94,41 @@ fun AddActivityidget(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     userList.forEach {
-                        Row {
+                        mainVM.userState.collectAsState().value?.username.let { user -> if(user != it.username) {
+                            Row {
 //                            Checkbox(
 //                                onCheckedChange = {},
 //                                checked = false
 //                            )
-                            Text(
-                                it.firstName + " " + it.lastName,
-                                fontSize = 18.sp,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(
-                                    top = 12.dp
-                                ),
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
+                                Text(
+                                    it.firstName + " " + it.lastName,
+                                    fontSize = 18.sp,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(
+                                            top = 12.dp
+                                        ),
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1
 
-                            )
-                            Spacer(Modifier.size(12.dp))
-                            OutlinedTextField(
-                                onValueChange = { it1 ->
-                                    userAmount =
-                                        userAmount.plus(it.username to (it1.toFloatOrNull() ?: 0f))
+                                )
+                                Spacer(Modifier.size(12.dp))
+                                OutlinedTextField(
+                                    onValueChange = { it1 ->
+                                        userAmount =
+                                            userAmount.plus(it.username to (it1.toFloatOrNull() ?: 0f))
+                                    },
+                                    value = userAmount[it.username]?.toString() ?: "0",
+                                    modifier = Modifier.width(72.dp),
+                                    shape = MaterialTheme.shapes.medium
 
-                                },
-                                value = userAmount[it.username]?.toString() ?: "0",
-                                modifier = Modifier.width(72.dp),
-                                shape = MaterialTheme.shapes.medium
+                                )
+                            }
+                        } }
 
-                            )
-                        }
                     }
                     OutlinedTextField(
-                        value = (sum / 100).toString(),
+                        value = sum.toString(),
                         onValueChange = { sum = it.toInt() },
                         shape = MaterialTheme.shapes.medium,
                         label = { Text("Cумма") }
@@ -138,14 +143,19 @@ fun AddActivityidget(
                         Text("Отменить")
                     }
                     Button(
-                        onClick = { mainVM.sendActivity(
+                        onClick = { onDismissRequest()
+                            mainVM.sendActivity(
                             request = CreateActivityRequest(
                                 name = name,
-                                sum = (sum * 100).toLong(),
+                                sum = sum * 100,
                                 randanId = randan.id,
-                                debts = userAmount.map { DebtRequest(it.key, (it.value * 100).toLong()) }
+                                debts = userAmount.map { DebtRequest(it.key, (it.value * 100).toInt()) }
                             )
-                        ) },
+                        )
+                            scope.launch {
+                                mainVM.fetchRandans()
+                            }
+                                  },
                         modifier = Modifier.weight(1f)
                     ) {
                         Text("Создать")
