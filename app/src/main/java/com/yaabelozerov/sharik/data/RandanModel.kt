@@ -16,7 +16,6 @@ data class Randan(
     val id: String,
     val name: String,
     val activities: List<Activity>,
-    val debts: List<Debt>,
     val users: List<User>,
     val isFinished: Boolean,
 )
@@ -26,7 +25,7 @@ data class Activity(
     val name: String,
     val sum: Long,
     val pays: Pays,
-    val owes: List<Owe>,
+    val owe: List<Owe>,
 )
 
 data class Pays(
@@ -39,7 +38,7 @@ data class Pays(
 )
 
 data class Owe(
-    val user: User,
+    val who: User,
     val amount: Long,
 )
 

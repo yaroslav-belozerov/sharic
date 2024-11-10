@@ -50,14 +50,12 @@ import java.util.UUID
 data class TotalState(
     val totalProfit: Float = 0f,
     val totalDebt: Float = 0f,
-    val peopleProfit: List<Pair<Who, Long>> = emptyList(),
-    val peopleDebt: List<Pair<Who, Long>> = emptyList(),
+    val peopleProfit: Map<Who, Long> = emptyMap(),
+    val peopleDebt: Map<Who, Long> = emptyMap(),
 )
 
 data class MainState(
-    val userId: Long = 0L,
-    val randans: List<Randan> = emptyList(),
-    val token: String? = null
+    val userId: Long = 0L, val randans: List<Randan> = emptyList(), val token: String? = null
 )
 
 class MainVM(
@@ -117,7 +115,7 @@ class MainVM(
 
     private suspend fun fetchRandans() {
         try {
-            _state.update {
+            if (false) _state.update {
                 it.copy(
                     randans = listOf(
                         Randan(
@@ -127,13 +125,28 @@ class MainVM(
                                     "Макароны по-флотки",
                                     30000,
                                     Pays("", "yaroslavrofl", "Ярослав", "Рофл", ""),
-                                    "",
                                     listOf(
-                                        Owe(User("1", "super_artyom", "Артём", "Прикол", "http://igw.isntrui.ru:1401/res/prod_avatar_718414092_1394-1072.jpg"), 10000),
-                                        Owe(User("2", "jonkler_", "Тёмный", "Трикстер", "http://igw.isntrui.ru:1401/res/prod_avatar_718414092_1394-1072.jpg"), 20000),
+                                        Owe(
+                                            User(
+                                                "1",
+                                                "super_artyom",
+                                                "Артём",
+                                                "Прикол",
+                                                "http://igw.isntrui.ru:1401/res/prod_avatar_718414092_1394-1072.jpg"
+                                            ), 10000
+                                        ),
+                                        Owe(
+                                            User(
+                                                "2",
+                                                "jonkler_",
+                                                "Тёмный",
+                                                "Трикстер",
+                                                "http://igw.isntrui.ru:1401/res/prod_avatar_718414092_1394-1072.jpg"
+                                            ), 20000
+                                        ),
                                     )
                                 )
-                            ), emptyList(), emptyList(), false
+                            ), emptyList(), false
                         ),
                     )
                 )
@@ -146,14 +159,24 @@ class MainVM(
                     resp.othersOweYou.forEach { elem ->
                         viewModelScope.launch {
                             _totalState.update { state ->
-                                state.copy(peopleProfit = state.peopleProfit.plus(Pair(elem.who, elem.amount)), totalProfit = state.totalProfit + elem.amount)
+                                state.copy(
+                                    peopleProfit = state.peopleProfit.plus(
+                                        elem.who to state.peopleProfit.getOrDefault(elem.who, 0L)
+                                            .plus(elem.amount)
+                                    ), totalProfit = state.totalProfit + elem.amount
+                                )
                             }
                         }
                     }
                     resp.youOweOthers.forEach { elem ->
                         viewModelScope.launch {
                             _totalState.update { state ->
-                                state.copy(peopleDebt = state.peopleDebt.plus(Pair(elem.who, elem.amount)), totalDebt = state.totalDebt + elem.amount)
+                                state.copy(
+                                    peopleDebt = state.peopleDebt.plus(
+                                        elem.who to state.peopleDebt.getOrDefault(elem.who, 0L)
+                                            .plus(elem.amount)
+                                    ), totalDebt = state.totalDebt + elem.amount
+                                )
                             }
                         }
                     }
