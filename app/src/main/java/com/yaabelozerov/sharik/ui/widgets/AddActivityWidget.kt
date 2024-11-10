@@ -50,6 +50,7 @@ import com.yaabelozerov.sharik.data.User
 import com.yaabelozerov.sharik.domain.MainVM
 import kotlinx.coroutines.launch
 import okhttp3.internal.toImmutableList
+import okhttp3.internal.toImmutableMap
 
 @Composable
 fun AddActivityidget(
@@ -62,7 +63,8 @@ fun AddActivityidget(
     var name by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     var sum by remember { mutableStateOf<Float?>(null) }
-    var userAmount by remember { mutableStateOf(mapOf<String, Float>()) }
+    val even = sum?.div(if (userList.size <= 1) 1 else (userList.size-1))
+    var userAmount by remember { mutableStateOf(userList.map { it.username to 0f }.toMap().toImmutableMap()) }
     var scope = rememberCoroutineScope()
 
 
@@ -96,8 +98,8 @@ fun AddActivityidget(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Button(modifier = Modifier.fillMaxWidth(), onClick = {
-                        userAmount = userAmount.keys.associateWith { (sum ?: 0f) / userAmount.size }
+                    if (userList.size > 1) Button(modifier = Modifier.fillMaxWidth(), onClick = {
+                        userAmount = userAmount.mapValues { even ?: 0f }.toImmutableMap()
                     }) { Text("Разделить поровну") }
                     OutlinedTextField(value = sum?.toString() ?: "",
                         onValueChange = {
@@ -141,7 +143,7 @@ fun AddActivityidget(
                                             }catch (e: Exception) { e.printStackTrace() }
                                         },
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                        value = userAmount[it.username]?.toString() ?: "",
+                                        value = userAmount[it.username]!!.toString(),
                                         modifier = Modifier.width(72.dp),
                                         shape = MaterialTheme.shapes.medium
                                     )
