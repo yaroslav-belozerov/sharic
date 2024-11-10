@@ -120,42 +120,6 @@ class MainVM(
 
     private suspend fun fetchRandans() {
         try {
-            if (false) _state.update {
-                it.copy(
-                    randans = listOf(
-                        Randan(
-                            "asdcd", "Поесть", listOf(
-                                Activity(
-                                    "",
-                                    "Макароны по-флотки",
-                                    30000,
-                                    Pays("", "yaroslavrofl", "Ярослав", "Рофл", ""),
-                                    listOf(
-                                        Owe(
-                                            User(
-                                                "1",
-                                                "super_artyom",
-                                                "Артём",
-                                                "Прикол",
-                                                "http://igw.isntrui.ru:1401/res/prod_avatar_718414092_1394-1072.jpg"
-                                            ), 10000
-                                        ),
-                                        Owe(
-                                            User(
-                                                "2",
-                                                "jonkler_",
-                                                "Тёмный",
-                                                "Трикстер",
-                                                "http://igw.isntrui.ru:1401/res/prod_avatar_718414092_1394-1072.jpg"
-                                            ), 20000
-                                        ),
-                                    )
-                                )
-                            ), emptyList(), false
-                        ),
-                    )
-                )
-            }
             val randans = api.getRandansByUser(_state.value.token!!)
             _state.update { it.copy(randans = randans) }
             randans.forEach {
@@ -287,6 +251,7 @@ class MainVM(
         viewModelScope.launch {
             _isRefreshing.update { true }
             delay(1000)
+            _totalState.update { TotalState() }
             fetchUser()
             fetchRandans()
             _isRefreshing.update { false }

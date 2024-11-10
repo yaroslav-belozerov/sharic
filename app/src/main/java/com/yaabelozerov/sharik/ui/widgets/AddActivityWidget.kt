@@ -63,8 +63,8 @@ fun AddActivityidget(
     var name by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     var sum by remember { mutableStateOf<Float?>(null) }
-    val even = sum?.div(if (userList.size <= 1) 1 else (userList.size-1))
-    var userAmount by remember { mutableStateOf(userList.map { it.username to 0f }.toMap().toImmutableMap()) }
+    val even = sum?.div(userList.size)
+    var userAmount by remember { mutableStateOf(userList.associate { it.username to 0f }.toImmutableMap()) }
     var scope = rememberCoroutineScope()
 
 
@@ -115,7 +115,7 @@ fun AddActivityidget(
                     )
                     userList.forEach {
                         mainVM.userState.collectAsState().value?.username.let { user ->
-                            if (user != it.username) {
+                            if (true) {
                                 Row {
 //                            Checkbox(
 //                                onCheckedChange = {},
@@ -145,7 +145,8 @@ fun AddActivityidget(
                                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                                         value = userAmount[it.username]!!.toString(),
                                         modifier = Modifier.width(72.dp),
-                                        shape = MaterialTheme.shapes.medium
+                                        shape = MaterialTheme.shapes.medium,
+                                        singleLine = true
                                     )
                                 }
                             }
