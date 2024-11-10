@@ -11,16 +11,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.squareup.moshi.Moshi
+import com.yaabelozerov.sharik.data.Activity
 import com.yaabelozerov.sharik.data.ApiService
 import com.yaabelozerov.sharik.data.CreateActivityRequest
 import com.yaabelozerov.sharik.data.CreateRandanRequest
 import com.yaabelozerov.sharik.data.DataStore
 import com.yaabelozerov.sharik.data.LoginDTO
+import com.yaabelozerov.sharik.data.Owe
+import com.yaabelozerov.sharik.data.Pays
 import com.yaabelozerov.sharik.data.Randan
 import com.yaabelozerov.sharik.data.RegisterDTO
 import com.yaabelozerov.sharik.data.User
 import com.yaabelozerov.sharik.data.Who
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -56,7 +60,9 @@ data class MainState(
     val token: String? = null
 )
 
-class MainVM(private val api: ApiService, private val dataStore: DataStore, private val moshi: Moshi) : ViewModel() {
+class MainVM(
+    private val api: ApiService, private val dataStore: DataStore, private val moshi: Moshi
+) : ViewModel() {
     private val _state = MutableStateFlow(MainState())
     val state = _state.asStateFlow()
 
@@ -70,6 +76,9 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
     fun setMediaChoose(f: () -> Unit) {
         mediaChoose.update { f }
     }
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
 
     fun onPickMedia() {
         mediaChoose.value?.invoke()
@@ -85,8 +94,8 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
                     val file = File(dir, UUID.randomUUID().toString() + ".jpg")
                     file.createNewFile()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, file.outputStream())
-                    val part = MultipartBody.Part.createFormData("file", file.name,
-                        file.asRequestBody()
+                    val part = MultipartBody.Part.createFormData(
+                        "file", file.name, file.asRequestBody()
                     )
                     val resp = api.uploadAvatar(part, _state.value.token!!)
                     editUser(_userState.value!!.copy(avatarUrl = resp.string()))
@@ -97,7 +106,6 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
 
     init {
         viewModelScope.launch {
-            //fetchCardValues()
             dataStore.getToken().distinctUntilChanged().collect { tok ->
                 _state.update { it.copy(token = tok) }
                 Log.i("token", tok)
@@ -109,6 +117,27 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
 
     private suspend fun fetchRandans() {
         try {
+            _state.update {
+                it.copy(
+                    randans = listOf(
+                        Randan(
+                            "asdcd", "Поесть", listOf(
+                                Activity(
+                                    "",
+                                    "Макароны по-флотки",
+                                    30000,
+                                    Pays("", "yaroslavrofl", "Ярослав", "Рофл", ""),
+                                    "",
+                                    listOf(
+                                        Owe(User("1", "super_artyom", "Артём", "Прикол", "http://igw.isntrui.ru:1401/res/prod_avatar_718414092_1394-1072.jpg"), 10000),
+                                        Owe(User("2", "jonkler_", "Тёмный", "Трикстер", "http://igw.isntrui.ru:1401/res/prod_avatar_718414092_1394-1072.jpg"), 20000),
+                                    )
+                                )
+                            ), emptyList(), emptyList(), false
+                        ),
+                    )
+                )
+            }
             val randans = api.getRandansByUser(_state.value.token!!)
             _state.update { it.copy(randans = randans) }
             randans.forEach {
@@ -137,6 +166,7 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
             e.printStackTrace()
         }
     }
+
 
     suspend fun fetchUser() {
         try {
@@ -196,7 +226,11 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
     fun createRandan(name: String) {
         viewModelScope.launch {
             _state.value.token?.let {
-                api.createRandan(CreateRandanRequest(name, emptyList(), emptyList(), emptyList(), false), it)
+                api.createRandan(
+                    CreateRandanRequest(
+                        name, emptyList(), emptyList(), emptyList(), false
+                    ), it
+                )
             } ?: Log.e("createRandan", "token null")
             fetchRandans()
         }
@@ -214,6 +248,16 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
         _userState.update { null }
         viewModelScope.launch {
             dataStore.saveToken("")
+        }
+    }
+
+    fun refreshAll() {
+        viewModelScope.launch {
+            _isRefreshing.update { true }
+            delay(1000)
+            fetchUser()
+            fetchRandans()
+            _isRefreshing.update { false }
         }
     }
 }

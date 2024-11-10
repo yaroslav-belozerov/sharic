@@ -22,11 +22,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,6 +51,7 @@ import com.yaabelozerov.sharik.data.Who
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.components.RCard
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(
     mainVM: MainVM,
@@ -53,42 +59,31 @@ fun MainPage(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var arrowDeg = animateFloatAsState(if (expanded) 180f else 0f, animationSpec = tween(400))
-    Column(
-        Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top
-    ) {
-        if (false) Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 16.dp, start = 32.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Долги", // TODO String res
-                fontSize = 18.sp
-            )
-            Box(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 8.dp)
-                    .height(4.dp)
-                    .weight(1f)
-                    .clip(MaterialTheme.shapes.medium)
-                    .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
-            )
+    val pullRefreshState = rememberPullToRefreshState()
+    val lst = mainVM.state.collectAsState().value.randans
 
-            IconButton(onClick = {
-                //if (!expanded) mainVM.fetchCardPeople()
-                expanded = !expanded
-            }) {
-                Icon(
-                    Icons.Filled.KeyboardArrowDown,
-                    contentDescription = null,
-                    Modifier
-                        .size(32.dp)
-                        .rotate(arrowDeg.value)
+    Box(Modifier.fillMaxSize().nestedScroll(pullRefreshState.nestedScrollConnection)) {
+        LazyColumn {
+            item { Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp, start = 32.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Долги", // TODO String res
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
                 )
-            }
-        }
+                Box(
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 8.dp)
+                        .height(4.dp)
+                        .weight(1f)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+                )
 
         Row(
             Modifier
@@ -113,14 +108,28 @@ fun MainPage(
             )
         }
 
-        val lst = mainVM.state.collectAsState().value.randans
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(lst) {
                 RCard(it, mainVM, onClick)
+                Spacer(Modifier.height(8.dp))
             }
         }
-    }
 
+        if (pullRefreshState.isRefreshing) {
+            LaunchedEffect(null) {
+                mainVM.refreshAll()
+            }
+        }
+
+        val isRefreshing = mainVM.isRefreshing.collectAsState().value
+        LaunchedEffect(isRefreshing) {
+            if (isRefreshing) {
+                pullRefreshState.startRefresh()
+            } else {
+                pullRefreshState.endRefresh()
+            }
+        }
+        PullToRefreshContainer(pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
+    }
 }
 
 @Composable

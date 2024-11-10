@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -65,20 +66,6 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-val appModule = module {
-    single { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-    single {
-        Retrofit.Builder().client(
-            OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
-                .build()
-        ).baseUrl(Const.BASE_URL).addConverterFactory(MoshiConverterFactory.create(get())).build()
-            .create(ApiService::class.java)
-    }
-    single { DataStore(get()) }
-    viewModelOf(::MainVM)
-}
-
 enum class Nav(
     val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String
 ) {
@@ -93,15 +80,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        startKoin {
-            androidContext(this@MainActivity)
-            modules(appModule)
-        }
-
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip: ClipData =
             ClipData.newPlainText("simple text", "http://sharik.ru/invite?randan_id=12345")
-
 
         val mainVM = getViewModel<MainVM>()
 
@@ -164,11 +145,13 @@ class MainActivity : ComponentActivity() {
                     },
                     floatingActionButton = {
                         if (current == Nav.MAIN.route) {
-                            FloatingActionButton(onClick = {
+                            ExtendedFloatingActionButton(onClick = {
                                 addRandanOpen = true
-                            }) {
+                            }, text = {
+                                Text("Кутёж")
+                            }, icon = {
                                 Icon(Icons.Filled.Add, contentDescription = null)
-                            }
+                            })
                         }
                     }) { innerPadding ->
 

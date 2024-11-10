@@ -26,6 +26,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,9 +36,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -81,10 +86,6 @@ fun SettingPage(
                                 .clip(shape = CircleShape)
                                 .clickable { mainVM.onPickMedia() }
                                 .size(98.dp))
-                    } ?: IconButton(onClick = { mainVM.onPickMedia() }) {
-                        Icon(
-                            Icons.Default.Add, contentDescription = null
-                        )
                     }
                     Column {
                         user?.firstName?.let { name ->
@@ -104,21 +105,27 @@ fun SettingPage(
                                 )
                             }
                             else {
-                                var newName by remember { mutableStateOf(name) }
+                                var newName by remember { mutableStateOf(TextFieldValue(name)) }
+                                val focus = remember { FocusRequester() }
+                                LaunchedEffect(null) {
+                                    focus.requestFocus()
+                                    newName = newName.copy(selection = TextRange(name.length))
+                                }
                                 OutlinedTextField(newName,
                                     { newName = it },
                                     shape = MaterialTheme.shapes.medium,
                                     trailingIcon = {
                                         IconButton(onClick = {
                                             scope.launch {
-                                                mainVM.editUser(user.copy(firstName = newName))
+                                                mainVM.editUser(user.copy(firstName = newName.text))
                                             }
                                             edit = false
                                         }) { Icon(Icons.Default.Check, contentDescription = null) }
                                     },
                                     textStyle = LocalTextStyle.current.copy(
                                         fontSize = 22.sp,
-                                    )
+                                    ),
+                                    modifier = Modifier.focusRequester(focus)
                                 )
                             }
                         }
@@ -139,21 +146,27 @@ fun SettingPage(
                                 )
                             }
                             else {
-                                var newName by remember { mutableStateOf(name) }
+                                var newName by remember { mutableStateOf(TextFieldValue(name)) }
+                                val focus = remember { FocusRequester() }
+                                LaunchedEffect(null) {
+                                    focus.requestFocus()
+                                    newName = newName.copy(selection = TextRange(name.length))
+                                }
                                 OutlinedTextField(newName,
                                     { newName = it },
                                     shape = MaterialTheme.shapes.medium,
                                     trailingIcon = {
                                         IconButton(onClick = {
                                             scope.launch {
-                                                mainVM.editUser(user.copy(lastName = newName))
+                                                mainVM.editUser(user.copy(lastName = newName.text))
                                             }
                                             edit = false
                                         }) { Icon(Icons.Default.Check, contentDescription = null) }
                                     },
                                     textStyle = LocalTextStyle.current.copy(
                                         fontSize = 22.sp,
-                                    )
+                                    ),
+                                    modifier = Modifier.focusRequester(focus)
                                 )
                             }
                         }

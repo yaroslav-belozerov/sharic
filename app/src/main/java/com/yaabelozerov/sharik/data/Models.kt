@@ -13,12 +13,12 @@ data class TokenDTO(val token: String)
 
 data class CreateActivityRequest(
     val name: String,
-    val sum: Long,
+    val sum: Int,
     val randanId: String,
     val debts: List<DebtRequest>,
 )
 
 data class DebtRequest(
     val username: String,
-    val amount: Long,
+    val amount: Int,
 )
