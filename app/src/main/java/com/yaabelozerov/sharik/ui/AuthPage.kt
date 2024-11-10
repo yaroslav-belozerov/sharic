@@ -47,6 +47,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                         loginDTO = loginDTO.copy(username = it)
                         typedUsername = true
                     },
+                    singleLine = true,
                     isError = !isUsernameValid && typedUsername,
                     supportingText = { if (!isUsernameValid && typedUsername) Text("Логин должен содержать от 5 до 50 символов") }, shape = MaterialTheme.shapes.medium)
                 val isPasswordValid =
@@ -60,6 +61,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                         loginDTO = loginDTO.copy(password = it)
                         typedPassword = true
                     },
+                    singleLine = true,
                     isError = !isPasswordValid && typedPassword,
                     supportingText = { if (!isPasswordValid && typedPassword) Text("Пароль должен содержать от 8 до 50 символов") }, shape = MaterialTheme.shapes.medium)
                 if (!loading) Button(onClick = {
@@ -76,10 +78,12 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                 OutlinedTextField(registerDTO.firstName,
                     label = { Text("Имя") },
                     enabled = !loading,
+                    singleLine = true,
                     onValueChange = { registerDTO = registerDTO.copy(firstName = it) }, shape = MaterialTheme.shapes.medium)
                 OutlinedTextField(registerDTO.lastName,
                     label = { Text("Фамилия") },
                     enabled = !loading,
+                    singleLine = true,
                     onValueChange = { registerDTO = registerDTO.copy(lastName = it) }, shape = MaterialTheme.shapes.medium)
                 val isUsernameValid =
                     remember(registerDTO.username.length) { (registerDTO.username.length in 5..50) }
@@ -91,6 +95,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                         registerDTO = registerDTO.copy(username = it)
                         typedUsername = true
                     },
+                    singleLine = true,
                     isError = !isUsernameValid && typedUsername,
                     supportingText = { if (!isUsernameValid && typedUsername) Text("Логин должен содержать от 5 до 50 символов") }, shape = MaterialTheme.shapes.medium)
                 val isPasswordValid =
@@ -104,6 +109,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
                         registerDTO = registerDTO.copy(password = it)
                         typedPassword = true
                     },
+                    singleLine = true,
                     isError = !isPasswordValid && typedPassword,
                     supportingText = { if (!isPasswordValid && typedPassword) Text("Пароль должен содержать от 8 до 50 символов") }, shape = MaterialTheme.shapes.medium)
                 if (!loading) Button(onClick = {

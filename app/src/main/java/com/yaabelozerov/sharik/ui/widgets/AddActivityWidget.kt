@@ -89,7 +89,8 @@ fun AddActivityidget(
                     label = {
                         Text("Название")
                     },
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.medium,
+                    singleLine = true
                 )
 
                 Column(
