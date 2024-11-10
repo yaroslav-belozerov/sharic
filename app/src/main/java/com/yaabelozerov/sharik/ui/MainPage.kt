@@ -87,6 +87,15 @@ fun MainPage(
                             .clip(MaterialTheme.shapes.medium)
                             .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
                     )
+                    IconButton(onClick = { expanded = !expanded }) {
+                        Icon(
+                            Icons.Default.KeyboardArrowDown,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .rotate(arrowDeg.value)
+                                .size(32.dp)
+                        )
+                    }
                 }
             }
 
