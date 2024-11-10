@@ -250,7 +250,7 @@ class MainVM(
 
     fun sendActivity(request: CreateActivityRequest) {
         viewModelScope.launch {
-            _state.value.token?.let { api.createActivgit ity(it, request) }
+            _state.value.token?.let { api.createActivity(it, request) }
             fetchRandans()
         }
     }
