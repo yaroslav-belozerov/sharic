@@ -1,10 +1,8 @@
 package com.yaabelozerov.sharik.ui
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +25,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,10 +42,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yaabelozerov.sharik.data.User
+import com.yaabelozerov.sharik.data.Who
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.components.RCard
-import kotlin.math.exp
 
 @Composable
 fun MainPage(
@@ -95,27 +90,26 @@ fun MainPage(
             }
         }
 
-        if (false) Row(
+        Row(
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            val (profit, debt) = mainVM.state.collectAsState().value.cardPreviews
-            val (profitPeople, debtPeople) = mainVM.state.collectAsState().value.cardPeople
+            val totalState = mainVM.totalState.collectAsState().value
             DebtCard(
                 MaterialTheme.colorScheme.tertiaryContainer,
                 "Мне",
-                profit.toString(),
+                totalState.totalProfit.toString(),
                 expanded,
-                profitPeople
+                totalState.peopleProfit
             )
             DebtCard(
                 MaterialTheme.colorScheme.errorContainer,
                 "Мои",
-                debt.toString(),
+                totalState.totalDebt.toString(),
                 expanded,
-                debtPeople
+                totalState.peopleDebt
             )
         }
 
@@ -135,7 +129,7 @@ fun RowScope.DebtCard(
     text: String,
     value: String,
     expanded: Boolean,
-    people: List<Pair<User, Float>>
+    people: List<Pair<Who, Long>>
 ) {
     Card(
         Modifier.weight(1f), colors = CardDefaults.cardColors(

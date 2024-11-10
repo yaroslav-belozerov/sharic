@@ -19,6 +19,7 @@ import com.yaabelozerov.sharik.data.LoginDTO
 import com.yaabelozerov.sharik.data.Randan
 import com.yaabelozerov.sharik.data.RegisterDTO
 import com.yaabelozerov.sharik.data.User
+import com.yaabelozerov.sharik.data.Who
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,13 +43,16 @@ import java.io.File
 import java.nio.file.Files
 import java.util.UUID
 
+data class TotalState(
+    val totalProfit: Float = 0f,
+    val totalDebt: Float = 0f,
+    val peopleProfit: List<Pair<Who, Long>> = emptyList(),
+    val peopleDebt: List<Pair<Who, Long>> = emptyList(),
+)
+
 data class MainState(
     val userId: Long = 0L,
     val randans: List<Randan> = emptyList(),
-    val cardPreviews: Pair<Float, Float> = Pair(0f, 0f),
-    val cardPeople: Pair<List<Pair<User, Float>>, List<Pair<User, Float>>> = Pair(
-        emptyList(), emptyList()
-    ),
     val token: String? = null
 )
 
@@ -58,6 +62,9 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
 
     private val _userState = MutableStateFlow<User?>(null)
     val userState = _userState.asStateFlow()
+
+    private val _totalState = MutableStateFlow(TotalState())
+    val totalState = _totalState.asStateFlow()
 
     private val mediaChoose = MutableStateFlow<(() -> Unit)?>(null)
     fun setMediaChoose(f: () -> Unit) {
@@ -100,10 +107,31 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
         }
     }
 
-    suspend fun fetchRandans() {
+    private suspend fun fetchRandans() {
         try {
             val randans = api.getRandansByUser(_state.value.token!!)
             _state.update { it.copy(randans = randans) }
+            randans.forEach {
+                try {
+                    val resp = api.getDebtsByRandan(it.id, _state.value.token!!)
+                    resp.othersOweYou.forEach { elem ->
+                        viewModelScope.launch {
+                            _totalState.update { state ->
+                                state.copy(peopleProfit = state.peopleProfit.plus(Pair(elem.who, elem.amount)), totalProfit = state.totalProfit + elem.amount)
+                            }
+                        }
+                    }
+                    resp.othersOweYou.forEach { elem ->
+                        viewModelScope.launch {
+                            _totalState.update { state ->
+                                state.copy(peopleDebt = state.peopleDebt.plus(Pair(elem.who, elem.amount)), totalDebt = state.totalDebt + elem.amount)
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
         } catch (e: Exception) {
             Log.w("api", "FetchRandans")
             e.printStackTrace()
@@ -126,30 +154,6 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
 
     private suspend fun setToken(token: String) {
         dataStore.saveToken("Bearer $token")
-    }
-
-    private suspend fun fetchCardValues() {
-        _state.update {
-            it.copy(
-                cardPreviews = Pair(
-                    api.totalDebtByUser(_state.value.userId, _state.value.token!!),
-                    api.totalProfitByUser(_state.value.userId, _state.value.token!!)
-                )
-            )
-        }
-    }
-
-    fun fetchCardPeople() {
-        viewModelScope.launch {
-            _state.update {
-                it.copy(
-                    cardPeople = Pair(
-                        api.peopleToGiveMoneyByUser(0L, _state.value.token!!),
-                        api.peopleToRecieveMoneyByUser(0L, _state.value.token!!)
-                    )
-                )
-            }
-        }
     }
 
     fun login(loginDTO: LoginDTO) {
