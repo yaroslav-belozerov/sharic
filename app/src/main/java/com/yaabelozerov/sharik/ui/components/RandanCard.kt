@@ -1,5 +1,6 @@
 package com.yaabelozerov.sharik.ui.components
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
@@ -101,6 +102,7 @@ fun RCard(
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             )  {
+                Log.d("", activities.toString())
                 activities.forEach {
                         ExpenseCard(
                             name = it.name,

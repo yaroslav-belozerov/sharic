@@ -139,6 +139,7 @@ class MainVM(
         }
     }
 
+
     suspend fun fetchUser() {
         try {
             val user = _state.value.token?.let { api.getUser(it) }
