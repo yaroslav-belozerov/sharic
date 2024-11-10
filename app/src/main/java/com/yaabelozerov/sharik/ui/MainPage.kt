@@ -153,7 +153,7 @@ fun MainPage(
 
 @Composable
 fun RowScope.DebtCard(
-    color: Color, text: String, value: String, expanded: Boolean, people: List<Pair<Who, Long>>
+    color: Color, text: String, value: String, expanded: Boolean, people: Map<Who, Long>
 ) {
     Card(
         Modifier.weight(1f), colors = CardDefaults.cardColors(
@@ -177,13 +177,13 @@ fun RowScope.DebtCard(
                 people.forEach {
                     Row {
                         Text(
-                            it.first.username,
+                            it.key.username,
                             overflow = TextOverflow.Ellipsis,
                             modifier = Modifier.weight(1f),
                             maxLines = 1
                         )
                         Spacer(Modifier.width(8.dp))
-                        Text(it.second.toString())
+                        Text(it.value.toString())
                     }
                 }
             }
