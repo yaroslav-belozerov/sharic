@@ -54,59 +54,66 @@ import com.yaabelozerov.sharik.ui.components.RCard
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(
-    mainVM: MainVM,
-    onClick: () -> Unit
+    mainVM: MainVM, onClick: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var arrowDeg = animateFloatAsState(if (expanded) 180f else 0f, animationSpec = tween(400))
     val pullRefreshState = rememberPullToRefreshState()
     val lst = mainVM.state.collectAsState().value.randans
 
-    Box(Modifier.fillMaxSize().nestedScroll(pullRefreshState.nestedScrollConnection)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .nestedScroll(pullRefreshState.nestedScrollConnection)
+    ) {
         LazyColumn {
-            item { Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp, start = 32.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Долги", // TODO String res
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Box(
+            item {
+                Row(
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 8.dp)
-                        .height(4.dp)
-                        .weight(1f)
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
-                )
+                        .fillMaxWidth()
+                        .padding(end = 16.dp, start = 32.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Долги", // TODO String res
+                        fontSize = 18.sp, fontWeight = FontWeight.Bold
+                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 8.dp)
+                            .height(4.dp)
+                            .weight(1f)
+                            .clip(MaterialTheme.shapes.medium)
+                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
+                    )
+                }
+            }
 
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            val totalState = mainVM.totalState.collectAsState().value
-            DebtCard(
-                MaterialTheme.colorScheme.tertiaryContainer,
-                "Мне",
-                totalState.totalProfit.toString(),
-                expanded,
-                totalState.peopleProfit
-            )
-            DebtCard(
-                MaterialTheme.colorScheme.errorContainer,
-                "Мои",
-                totalState.totalDebt.toString(),
-                expanded,
-                totalState.peopleDebt
-            )
-        }
+            item {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    val totalState = mainVM.totalState.collectAsState().value
+                    DebtCard(
+                        MaterialTheme.colorScheme.tertiaryContainer,
+                        "Мне",
+                        totalState.totalProfit.toString(),
+                        expanded,
+                        totalState.peopleProfit
+                    )
+                    DebtCard(
+                        MaterialTheme.colorScheme.errorContainer,
+                        "Мои",
+                        totalState.totalDebt.toString(),
+                        expanded,
+                        totalState.peopleDebt
+                    )
+                }
+            }
 
             items(lst) {
                 RCard(it, mainVM, onClick)
@@ -128,17 +135,16 @@ fun MainPage(
                 pullRefreshState.endRefresh()
             }
         }
-        PullToRefreshContainer(pullRefreshState, modifier = Modifier.align(Alignment.TopCenter))
+        PullToRefreshContainer(
+            pullRefreshState, modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 }
 
+
 @Composable
 fun RowScope.DebtCard(
-    color: Color,
-    text: String,
-    value: String,
-    expanded: Boolean,
-    people: List<Pair<Who, Long>>
+    color: Color, text: String, value: String, expanded: Boolean, people: List<Pair<Who, Long>>
 ) {
     Card(
         Modifier.weight(1f), colors = CardDefaults.cardColors(

@@ -150,7 +150,7 @@ class MainVM(
                             }
                         }
                     }
-                    resp.othersOweYou.forEach { elem ->
+                    resp.youOweOthers.forEach { elem ->
                         viewModelScope.launch {
                             _totalState.update { state ->
                                 state.copy(peopleDebt = state.peopleDebt.plus(Pair(elem.who, elem.amount)), totalDebt = state.totalDebt + elem.amount)
@@ -172,9 +172,7 @@ class MainVM(
         try {
             val user = _state.value.token?.let { api.getUser(it) }
             if (user != null) {
-                _userState.update { state ->
-                    user
-                }
+                _userState.update { user }
             }
         } catch (e: Exception) {
             Log.w("api", "FetchUser")
@@ -220,6 +218,7 @@ class MainVM(
     fun sendActivity(request: CreateActivityRequest) {
         viewModelScope.launch {
             _state.value.token?.let { api.createActivity(it, request) }
+            fetchRandans()
         }
     }
 

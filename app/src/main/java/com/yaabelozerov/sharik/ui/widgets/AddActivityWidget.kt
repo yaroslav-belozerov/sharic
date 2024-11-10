@@ -69,9 +69,7 @@ fun AddActivityidget(
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
+            ), modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 Modifier
@@ -87,48 +85,51 @@ fun AddActivityidget(
                     onValueChange = { name = it },
                     label = {
                         Text("Название")
-                    }, shape = MaterialTheme.shapes.medium
+                    },
+                    shape = MaterialTheme.shapes.medium
                 )
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     userList.forEach {
-                        mainVM.userState.collectAsState().value?.username.let { user -> if(user != it.username) {
-                            Row {
+                        mainVM.userState.collectAsState().value?.username.let { user ->
+                            if (user != it.username) {
+                                Row {
 //                            Checkbox(
 //                                onCheckedChange = {},
 //                                checked = false
 //                            )
-                                Text(
-                                    it.firstName + " " + it.lastName,
-                                    fontSize = 18.sp,
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(
-                                            top = 12.dp
-                                        ),
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1
+                                    Text(
+                                        it.firstName + " " + it.lastName,
+                                        fontSize = 18.sp,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(
+                                                top = 12.dp
+                                            ),
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = 1
 
-                                )
-                                Spacer(Modifier.size(12.dp))
-                                OutlinedTextField(
-                                    onValueChange = { it1 ->
-                                        userAmount =
-                                            userAmount.plus(it.username to (it1.toFloatOrNull() ?: 0f))
-                                    },
-                                    value = userAmount[it.username]?.toString() ?: "0",
-                                    modifier = Modifier.width(72.dp),
-                                    shape = MaterialTheme.shapes.medium
+                                    )
+                                    Spacer(Modifier.size(12.dp))
+                                    OutlinedTextField(
+                                        onValueChange = { it1 ->
+                                            userAmount = userAmount.plus(
+                                                it.username to (it1.toFloatOrNull() ?: 0f)
+                                            )
+                                        },
+                                        value = userAmount[it.username]?.toString() ?: "0",
+                                        modifier = Modifier.width(72.dp),
+                                        shape = MaterialTheme.shapes.medium
 
-                                )
+                                    )
+                                }
                             }
-                        } }
+                        }
 
                     }
-                    OutlinedTextField(
-                        value = sum.toString(),
+                    OutlinedTextField(value = sum.toString(),
                         onValueChange = { sum = it.toInt() },
                         shape = MaterialTheme.shapes.medium,
                         label = { Text("Cумма") }
@@ -143,20 +144,17 @@ fun AddActivityidget(
                         Text("Отменить")
                     }
                     Button(
-                        onClick = { onDismissRequest()
-                            mainVM.sendActivity(
-                            request = CreateActivityRequest(
-                                name = name,
+                        onClick = {
+                            onDismissRequest()
+                            mainVM.sendActivity(request = CreateActivityRequest(name = name,
                                 sum = sum * 100,
                                 randanId = randan.id,
-                                debts = userAmount.map { DebtRequest(it.key, (it.value * 100).toInt()) }
-                            )
-                        )
-                            scope.launch {
-                                mainVM.fetchRandans()
-                            }
-                                  },
-                        modifier = Modifier.weight(1f)
+                                debts = userAmount.map {
+                                    DebtRequest(
+                                        it.key, (it.value * 100).toInt()
+                                    )
+                                }))
+                        }, modifier = Modifier.weight(1f)
                     ) {
                         Text("Создать")
                     }
