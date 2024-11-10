@@ -1,6 +1,7 @@
 package com.yaabelozerov.sharik.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,10 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AttachMoney
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -36,18 +39,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
+import com.yaabelozerov.sharik.R
 import com.yaabelozerov.sharik.data.Owe
 import com.yaabelozerov.sharik.data.Randan
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.widgets.AddActivityidget
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.Async
 
 @Composable
 fun RCard(
@@ -84,7 +94,7 @@ fun RCard(
                 IconButton(
                     onClick = onClickAdd,
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(32.dp))
+                    Icon(Icons.Filled.People, contentDescription = null, modifier = Modifier.size(32.dp))
                 }
             }
 
@@ -125,23 +135,24 @@ fun ExpenseCard(
     paidBy: String,
     needToPay: List<Owe>
 ) {
+    var expanded by remember { mutableStateOf(false) }
     Card(
-        Modifier.fillMaxWidth(),
+        onClick = { expanded = !expanded },
+        modifier = Modifier.fillMaxWidth().animateContentSize(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
-        ),
+        )
     ) {
         Column(
-            Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            Modifier.padding(horizontal = 16.dp).padding(top = 16.dp),
         ) {
             Row {
                 Text(
                     name,
                     fontSize = 24.sp,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                    maxLines = 1
+                    modifier = Modifier.weight(1f).animateContentSize(),
+                    maxLines = if (expanded) 5 else 1
                 )
                 Spacer(Modifier.size(12.dp))
                 Text(
@@ -150,6 +161,7 @@ fun ExpenseCard(
                     fontWeight = FontWeight.Bold
                 )
             }
+            Spacer(Modifier.height(12.dp))
             Row(
                 Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -157,11 +169,20 @@ fun ExpenseCard(
                 Icon(Icons.Default.AttachMoney, contentDescription = null, Modifier.size(24.dp), tint = MaterialTheme.colorScheme.tertiary)
                 Text(paidBy, fontSize = 18.sp, color = MaterialTheme.colorScheme.tertiary)
             }
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(needToPay) {
-                    Column {
-                        Text(it.user.firstName, fontSize = 18.sp)
-                        Text((it.amount / 100).toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Spacer(Modifier.height(16.dp))
+            AnimatedVisibility(expanded) {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(bottom = 16.dp)) {
+                    items(needToPay) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            val painter = rememberAsyncImagePainter(R.drawable.avatar_placeholder)
+                            AsyncImage(model = it.user.avatarUrl, contentDescription = null, modifier = Modifier.size(48.dp).clip(
+                                CircleShape), contentScale = ContentScale.Crop, placeholder = painter
+                            )
+                            Column {
+                                Text("${it.user.firstName} ${it.user.lastName}", fontSize = 18.sp)
+                                Text((it.amount / 100.0).toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                            }
+                        }
                     }
                 }
             }

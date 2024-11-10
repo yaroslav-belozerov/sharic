@@ -81,10 +81,6 @@ fun SettingPage(
                                 .clip(shape = CircleShape)
                                 .clickable { mainVM.onPickMedia() }
                                 .size(98.dp))
-                    } ?: IconButton(onClick = { mainVM.onPickMedia() }) {
-                        Icon(
-                            Icons.Default.Add, contentDescription = null
-                        )
                     }
                     Column {
                         user?.firstName?.let { name ->

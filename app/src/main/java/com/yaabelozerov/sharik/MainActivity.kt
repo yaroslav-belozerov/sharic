@@ -24,6 +24,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -144,11 +145,13 @@ class MainActivity : ComponentActivity() {
                     },
                     floatingActionButton = {
                         if (current == Nav.MAIN.route) {
-                            FloatingActionButton(onClick = {
+                            ExtendedFloatingActionButton(onClick = {
                                 addRandanOpen = true
-                            }) {
+                            }, text = {
+                                Text("Кутёж")
+                            }, icon = {
                                 Icon(Icons.Filled.Add, contentDescription = null)
-                            }
+                            })
                         }
                     }) { innerPadding ->
 
