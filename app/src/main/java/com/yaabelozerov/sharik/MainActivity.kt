@@ -158,7 +158,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(Nav.MAIN.route) {
                             MainPage(mainVM) { clipboard.setPrimaryClip(
-                                ClipData.newPlainText("simple text", "https://prod.isntrui.ru?randan_id=$it")
+                                ClipData.newPlainText("simple text", "http://prod.isntrui.ru?randan_id=$it")
                             ) }
                         }
 
