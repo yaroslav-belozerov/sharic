@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
@@ -36,10 +37,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.HttpException
 import retrofit2.awaitResponse
 import retrofit2.http.Multipart
@@ -59,7 +64,7 @@ data class MainState(
 )
 
 class MainVM(
-    private val api: ApiService, private val dataStore: DataStore, private val moshi: Moshi
+    private val api: ApiService, private val dataStore: DataStore, private val moshi: Moshi, private val ctx: Context
 ) : ViewModel() {
     private val _state = MutableStateFlow(MainState())
     val state = _state.asStateFlow()
@@ -232,7 +237,13 @@ class MainVM(
     fun addUserToRandan(randanId: String) {
         viewModelScope.launch {
             _state.value.token?.let {
-                api.addUserToRandan(randanId, _userState.value!!.id, it)
+                try {
+                    val body = _userState.value!!.username.toRequestBody("text/plain".toMediaTypeOrNull())
+                    val resp = api.addUserToRandan(randanId, body, it)
+                    Toast.makeText(ctx, "Вас добавили в ${resp.name}", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             } ?: Log.e("addUserToRandan", "token null, randanId $randanId")
         }
     }

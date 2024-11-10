@@ -2,6 +2,7 @@ package com.yaabelozerov.sharik.data
 
 import android.util.Log
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
@@ -10,6 +11,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -73,8 +75,8 @@ interface ApiService {
         @Query("user_id") id: Long, @Header("Authorization") token: String
     ): List<Pair<User, Float>>
 
-    @POST("randan/{id}/addUser")
-    fun addUserToRandan(@Path("id") randanId: String, @Body userId: String, @Header("Authorization") token: String)
+    @PATCH("randan/{id}/addUser")
+    suspend fun addUserToRandan(@Path("id") randanId: String, @Body userId: RequestBody, @Header("Authorization") token: String): Randan
 
     @Multipart
     @POST("aws/upload")
