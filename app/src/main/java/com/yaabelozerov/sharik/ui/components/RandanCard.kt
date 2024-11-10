@@ -54,9 +54,8 @@ import com.yaabelozerov.sharik.ui.widgets.AddActivityidget
 fun RCard(
     randan: Randan,
     mainVM: MainVM,
-    onClickAdd: () -> Unit
+    onClickAdd: (String) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
     val activities = randan.activities
     var addActivityDialogOpen by remember { mutableStateOf(false) }
 
@@ -83,7 +82,7 @@ fun RCard(
                     fontSize = 32.sp,
                 )
                 IconButton(
-                    onClick = onClickAdd,
+                    onClick = { onClickAdd(randan.id) },
                 ) {
                     Icon(Icons.Filled.People, contentDescription = null, modifier = Modifier.size(32.dp))
                 }

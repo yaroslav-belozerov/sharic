@@ -73,8 +73,8 @@ interface ApiService {
         @Query("user_id") id: Long, @Header("Authorization") token: String
     ): List<Pair<User, Float>>
 
-    @POST("addUserToRandan")
-    fun addUserToRandan(@Query("randan_id") randanId: Long, @Header("Authorization") token: String)
+    @POST("randan/{id}/addUser")
+    fun addUserToRandan(@Path("id") randanId: String, @Body userId: String, @Header("Authorization") token: String)
 
     @Multipart
     @POST("aws/upload")
