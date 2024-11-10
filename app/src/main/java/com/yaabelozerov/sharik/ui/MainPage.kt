@@ -78,7 +78,8 @@ fun MainPage(
             ) {
                 Text(
                     text = "Долги", // TODO String res
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
                 )
                 Box(
                     modifier = Modifier
