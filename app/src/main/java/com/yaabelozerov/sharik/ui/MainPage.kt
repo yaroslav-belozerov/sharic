@@ -1,10 +1,8 @@
 package com.yaabelozerov.sharik.ui
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -29,7 +26,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -51,10 +47,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.yaabelozerov.sharik.data.User
+import com.yaabelozerov.sharik.data.Who
 import com.yaabelozerov.sharik.domain.MainVM
 import com.yaabelozerov.sharik.ui.components.RCard
-import kotlin.math.exp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,42 +85,28 @@ fun MainPage(
                         .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f))
                 )
 
-                IconButton(onClick = {
-                    expanded = !expanded
-                }) {
-                    Icon(
-                        Icons.Filled.KeyboardArrowDown,
-                        contentDescription = null,
-                        Modifier
-                            .size(32.dp)
-                            .rotate(arrowDeg.value)
-                    )
-                }
-            } }
-
-            item { Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                val (profit, debt) = mainVM.state.collectAsState().value.cardPreviews
-                val (profitPeople, debtPeople) = mainVM.state.collectAsState().value.cardPeople
-                DebtCard(
-                    MaterialTheme.colorScheme.tertiaryContainer,
-                    "Мне",
-                    profit.toString(),
-                    expanded,
-                    profitPeople
-                )
-                DebtCard(
-                    MaterialTheme.colorScheme.errorContainer,
-                    "Мои",
-                    debt.toString(),
-                    expanded,
-                    debtPeople
-                )
-            } }
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            val totalState = mainVM.totalState.collectAsState().value
+            DebtCard(
+                MaterialTheme.colorScheme.tertiaryContainer,
+                "Мне",
+                totalState.totalProfit.toString(),
+                expanded,
+                totalState.peopleProfit
+            )
+            DebtCard(
+                MaterialTheme.colorScheme.errorContainer,
+                "Мои",
+                totalState.totalDebt.toString(),
+                expanded,
+                totalState.peopleDebt
+            )
+        }
 
             items(lst) {
                 RCard(it, mainVM, onClick)
@@ -157,7 +138,7 @@ fun RowScope.DebtCard(
     text: String,
     value: String,
     expanded: Boolean,
-    people: List<Pair<User, Float>>
+    people: List<Pair<Who, Long>>
 ) {
     Card(
         Modifier.weight(1f), colors = CardDefaults.cardColors(
