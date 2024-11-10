@@ -88,6 +88,13 @@ fun RCard(
                 }
             }
 
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                items(randan.users) {
+                    AsyncImage(model = it.avatarUrl, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.size(48.dp).clip(
+                        CircleShape))
+                }
+            }
+
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             )  {
