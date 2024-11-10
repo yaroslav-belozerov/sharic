@@ -17,8 +17,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -81,7 +83,7 @@ enum class Nav(
     val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String
 ) {
     MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи"), SETTINGS(
-        "settings", Icons.Filled.Menu, Icons.Outlined.Menu, "Настройки"
+        "settings", Icons.Filled.Settings, Icons.Outlined.Settings, "Настройки"
     )
 }
 
@@ -128,7 +130,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navCtrl = rememberNavController()
             var addRandanOpen by remember { mutableStateOf(false) }
-            var actualRandan by remember { mutableStateOf("") }
 
             AppTheme {
                 if (addRandanOpen) {
@@ -185,9 +186,9 @@ class MainActivity : ComponentActivity() {
                         }
 
                     }
-                } else if (token == "") {
+                } else {
                     Scaffold {
-                        AuthPage(modifier = Modifier.padding(it),
+                        if (token == "") AuthPage(modifier = Modifier.padding(it),
                             onLogin = { mainVM.login(it) },
                             onRegister = { mainVM.register(it) })
                     }

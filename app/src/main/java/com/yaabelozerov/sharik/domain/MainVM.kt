@@ -77,13 +77,12 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
                     dir.mkdir()
                     val file = File(dir, UUID.randomUUID().toString() + ".jpg")
                     file.createNewFile()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 1, file.outputStream())
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, file.outputStream())
                     val part = MultipartBody.Part.createFormData("file", file.name,
                         file.asRequestBody()
                     )
                     val resp = api.uploadAvatar(part, _state.value.token!!)
                     editUser(_userState.value!!.copy(avatarUrl = resp.string()))
-                    fetchUser()
                 }
             }
         }
@@ -199,9 +198,18 @@ class MainVM(private val api: ApiService, private val dataStore: DataStore, priv
         }
     }
 
-    private suspend fun editUser(user: User) {
+    suspend fun editUser(user: User) {
         _state.value.token?.let {
             api.updateUser(user, it)
+            fetchUser()
+        }
+    }
+
+    fun logout() {
+        _state.update { MainState() }
+        _userState.update { null }
+        viewModelScope.launch {
+            dataStore.saveToken("")
         }
     }
 }
