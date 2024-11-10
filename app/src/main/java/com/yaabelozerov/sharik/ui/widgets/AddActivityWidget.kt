@@ -150,11 +150,11 @@ fun AddActivityidget(
                         onClick = {
                             onDismissRequest()
                             mainVM.sendActivity(request = CreateActivityRequest(name = name,
-                                sum = sum * 100,
+                                sum = sum,
                                 randanId = randan.id,
                                 debts = userAmount.map {
                                     DebtRequest(
-                                        it.key, (it.value * 100).toInt()
+                                        it.key, (it.value).toInt()
                                     )
                                 }))
                         }, modifier = Modifier.weight(1f)
