@@ -55,7 +55,7 @@ data class TotalState(
 )
 
 data class MainState(
-    val userId: Long = 0L, val randans: List<Randan> = emptyList(), val token: String? = null
+    val randans: List<Randan> = emptyList(), val token: String? = null
 )
 
 class MainVM(
@@ -229,12 +229,11 @@ class MainVM(
         }
     }
 
-    fun addUserToRandan(randanId: Long) {
+    fun addUserToRandan(randanId: String) {
         viewModelScope.launch {
             _state.value.token?.let {
-                api.addUserToRandan(randanId, it)
+                api.addUserToRandan(randanId, _userState.value!!.id, it)
             } ?: Log.e("addUserToRandan", "token null, randanId $randanId")
-            //api.addUserToRandan(0L, _state.value.token!!)
         }
     }
 

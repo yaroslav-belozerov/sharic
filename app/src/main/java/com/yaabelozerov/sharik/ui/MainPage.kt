@@ -54,7 +54,7 @@ import com.yaabelozerov.sharik.ui.components.RCard
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage(
-    mainVM: MainVM, onClick: () -> Unit
+    mainVM: MainVM, onClick: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var arrowDeg = animateFloatAsState(if (expanded) 180f else 0f, animationSpec = tween(400))
@@ -125,7 +125,7 @@ fun MainPage(
             }
 
             items(lst) {
-                RCard(it, mainVM, onClick)
+                RCard(it, mainVM, { onClick(it) })
                 Spacer(Modifier.height(8.dp))
             }
         }

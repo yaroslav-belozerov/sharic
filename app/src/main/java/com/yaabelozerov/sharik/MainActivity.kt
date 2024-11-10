@@ -81,8 +81,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip: ClipData =
-            ClipData.newPlainText("simple text", "http://sharik.ru/invite?randan_id=12345")
 
         val mainVM = getViewModel<MainVM>()
 
@@ -102,9 +100,7 @@ class MainActivity : ComponentActivity() {
 
         intent.data?.let { data ->
             data.getQueryParameter("randan_id")?.let { id ->
-                id.toLongOrNull()?.let {
-                    mainVM.addUserToRandan(it)
-                }
+                mainVM.addUserToRandan(id)
             }
         }
 
@@ -161,7 +157,9 @@ class MainActivity : ComponentActivity() {
                         startDestination = Nav.MAIN.route
                     ) {
                         composable(Nav.MAIN.route) {
-                            MainPage(mainVM) { clipboard.setPrimaryClip(clip) }
+                            MainPage(mainVM) { clipboard.setPrimaryClip(
+                                ClipData.newPlainText("simple text", "https://prod.isntrui.ru?randan_id=$it")
+                            ) }
                         }
 
                         composable(Nav.SETTINGS.route) {
