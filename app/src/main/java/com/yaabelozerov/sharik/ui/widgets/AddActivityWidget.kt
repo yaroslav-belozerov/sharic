@@ -59,7 +59,7 @@ fun AddActivityidget(
     var name by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     var sum by remember { mutableStateOf(1000) }
-    var userAmount by remember { mutableStateOf(mapOf<String, Float>()) }
+    var userAmount by remember { mutableStateOf(mapOf<String, Int>()) }
     var scope = rememberCoroutineScope()
 
 
@@ -86,7 +86,8 @@ fun AddActivityidget(
                     label = {
                         Text("Название")
                     },
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.medium,
+                    singleLine = true
                 )
 
                 Column(
@@ -116,11 +117,12 @@ fun AddActivityidget(
                                     OutlinedTextField(
                                         onValueChange = { it1 ->
                                             userAmount = userAmount.plus(
-                                                it.username to (it1.toFloatOrNull() ?: 0f)
+                                                it.username to (it1.toIntOrNull() ?: 0)
                                             )
                                         },
                                         value = userAmount[it.username]?.toString() ?: "0",
-                                        modifier = Modifier.width(72.dp),
+                                        modifier = Modifier.width(100.dp),
+                                        singleLine = true,
                                         shape = MaterialTheme.shapes.medium
 
                                     )
@@ -132,7 +134,8 @@ fun AddActivityidget(
                     OutlinedTextField(value = sum.toString(),
                         onValueChange = { sum = it.toInt() },
                         shape = MaterialTheme.shapes.medium,
-                        label = { Text("Cумма") }
+                        label = { Text("Cумма") },
+                        singleLine = true
 
                     )
                 }
