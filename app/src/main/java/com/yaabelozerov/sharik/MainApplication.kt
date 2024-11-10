@@ -20,7 +20,7 @@ val appModule = module {
     single {
         Retrofit.Builder().client(
             OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build()
         ).baseUrl(Const.BASE_URL).addConverterFactory(MoshiConverterFactory.create(get())).build()
             .create(ApiService::class.java)

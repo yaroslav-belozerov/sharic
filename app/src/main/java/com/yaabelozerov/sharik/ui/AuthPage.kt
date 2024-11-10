@@ -34,7 +34,7 @@ fun AuthPage(modifier: Modifier, onLogin: (LoginDTO) -> Unit, onRegister: (Regis
             verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Sharik", fontSize = 64.sp, fontWeight = FontWeight.Bold)
+            Text("SHARIC.", fontSize = 64.sp, fontWeight = FontWeight.Bold)
             if (acc) {
                 var loginDTO by remember { mutableStateOf(LoginDTO()) }
                 val isUsernameValid =

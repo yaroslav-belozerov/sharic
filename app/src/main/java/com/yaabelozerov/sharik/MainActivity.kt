@@ -80,6 +80,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val intentData = intent.data
+
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
         val mainVM = getViewModel<MainVM>()
@@ -96,12 +98,6 @@ class MainActivity : ComponentActivity() {
                     ActivityResultContracts.PickVisualMedia.ImageOnly
                 )
             )
-        }
-
-        intent.data?.let { data ->
-            data.getQueryParameter("randan_id")?.let { id ->
-                mainVM.addUserToRandan(id)
-            }
         }
 
         setContent {
@@ -151,6 +147,17 @@ class MainActivity : ComponentActivity() {
                         }
                     }) { innerPadding ->
 
+                    val us = mainVM.userState.collectAsState().value
+                    LaunchedEffect(us) {
+                        if (us != null) {
+                            intentData?.let {
+                                it.getQueryParameter("randan_id")?.let { id ->
+                                    mainVM.addUserToRandan(id)
+                                }
+                            }
+                        }
+                    }
+
                     NavHost(
                         modifier = Modifier.padding(innerPadding),
                         navController = navCtrl,
@@ -158,7 +165,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         composable(Nav.MAIN.route) {
                             MainPage(mainVM) { clipboard.setPrimaryClip(
-                                ClipData.newPlainText("simple text", "http://prod.isntrui.ru?randan_id=$it")
+                                ClipData.newPlainText("simple text", "http://prod.isntrui.ru/invite?randan_id=$it")
                             ) }
                         }
 
