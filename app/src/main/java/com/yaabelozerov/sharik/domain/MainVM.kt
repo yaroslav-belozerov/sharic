@@ -115,7 +115,7 @@ class MainVM(
 
     private suspend fun fetchRandans() {
         try {
-            _state.update {
+            if (false) _state.update {
                 it.copy(
                     randans = listOf(
                         Randan(
@@ -125,7 +125,6 @@ class MainVM(
                                     "Макароны по-флотки",
                                     30000,
                                     Pays("", "yaroslavrofl", "Ярослав", "Рофл", ""),
-                                    "",
                                     listOf(
                                         Owe(
                                             User(
@@ -147,7 +146,7 @@ class MainVM(
                                         ),
                                     )
                                 )
-                            ), emptyList(), emptyList(), false
+                            ), emptyList(), false
                         ),
                     )
                 )

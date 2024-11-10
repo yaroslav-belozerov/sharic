@@ -57,7 +57,7 @@ import kotlinx.coroutines.launch
 fun SettingPage(
     mainVM: MainVM
 ) {
-    val placeholderPainter = painterResource(R.drawable.avatar_placeholder)
+    val placeholderPainter = painterResource(R.drawable.avatar_placeholder_white)
     val user = mainVM.userState.collectAsState().value
     val scope = rememberCoroutineScope()
     Column(
