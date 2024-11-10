@@ -115,7 +115,7 @@ fun AddActivityidget(
                     )
                     userList.forEach {
                         mainVM.userState.collectAsState().value?.username.let { user ->
-                            if (user == it.username) {
+                            if (user != it.username) {
                                 Row {
 //                            Checkbox(
 //                                onCheckedChange = {},
