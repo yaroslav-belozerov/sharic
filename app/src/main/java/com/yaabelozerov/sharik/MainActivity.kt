@@ -17,11 +17,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -63,25 +66,11 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-val appModule = module {
-    single { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-    single {
-        Retrofit.Builder().client(
-            OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                .build()
-        ).baseUrl(Const.BASE_URL).addConverterFactory(MoshiConverterFactory.create(get())).build()
-            .create(ApiService::class.java)
-    }
-    single { DataStore(get()) }
-    viewModelOf(::MainVM)
-}
-
 enum class Nav(
     val route: String, val iconFilled: ImageVector, val iconOutlined: ImageVector, val title: String
 ) {
     MAIN("main", Icons.Filled.Home, Icons.Outlined.Home, "Мои кутежи"), SETTINGS(
-        "settings", Icons.Filled.Menu, Icons.Outlined.Menu, "Настройки"
+        "settings", Icons.Filled.Settings, Icons.Outlined.Settings, "Настройки"
     )
 }
 
@@ -91,15 +80,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        startKoin {
-            androidContext(this@MainActivity)
-            modules(appModule)
-        }
-
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip: ClipData =
             ClipData.newPlainText("simple text", "http://sharik.ru/invite?randan_id=12345")
-
 
         val mainVM = getViewModel<MainVM>()
 
@@ -128,7 +111,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navCtrl = rememberNavController()
             var addRandanOpen by remember { mutableStateOf(false) }
-            var actualRandan by remember { mutableStateOf("") }
 
             AppTheme {
                 if (addRandanOpen) {
@@ -163,11 +145,13 @@ class MainActivity : ComponentActivity() {
                     },
                     floatingActionButton = {
                         if (current == Nav.MAIN.route) {
-                            FloatingActionButton(onClick = {
+                            ExtendedFloatingActionButton(onClick = {
                                 addRandanOpen = true
-                            }) {
+                            }, text = {
+                                Text("Кутёж")
+                            }, icon = {
                                 Icon(Icons.Filled.Add, contentDescription = null)
-                            }
+                            })
                         }
                     }) { innerPadding ->
 
@@ -185,9 +169,9 @@ class MainActivity : ComponentActivity() {
                         }
 
                     }
-                } else if (token == "") {
+                } else {
                     Scaffold {
-                        AuthPage(modifier = Modifier.padding(it),
+                        if (token == "") AuthPage(modifier = Modifier.padding(it),
                             onLogin = { mainVM.login(it) },
                             onRegister = { mainVM.register(it) })
                     }
