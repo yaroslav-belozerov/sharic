@@ -166,7 +166,7 @@ fun RowScope.DebtCard(
             textAlign = TextAlign.Center,
         )
         Text(
-            text = value,
+            text = (value.toFloat() / 100).toString(),
             modifier = Modifier.padding(start = 16.dp),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
@@ -183,7 +183,7 @@ fun RowScope.DebtCard(
                             maxLines = 1
                         )
                         Spacer(Modifier.width(8.dp))
-                        Text(it.value.toString())
+                        Text((it.value / 100).toString())
                     }
                 }
             }
