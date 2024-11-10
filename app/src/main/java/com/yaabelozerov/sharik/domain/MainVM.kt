@@ -242,6 +242,7 @@ class MainVM(
     fun logout() {
         _state.update { MainState() }
         _userState.update { null }
+        _totalState.update { TotalState() }
         viewModelScope.launch {
             dataStore.saveToken("")
         }
